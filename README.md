@@ -33,7 +33,6 @@ Before running, set your API keys in environment variable called ALPHAVANTAGE
 git clone Link_to_This_Repo && cd advance_scraping
 conda env create -f environment.yml
 conda activate tasks
-export ALPHAVANTAGE=API_KEYS_HERE
 ```
 
 Note: Windows uses SET ALPHAVANTAGE=API_KEYS_HERE
@@ -55,9 +54,16 @@ conda activate tasks
 export ALPHAVANTAGE=API_KEYS_HERE
 celery -A tasks.app beat --loglevel=info
 ```
+> Note: Don´t do this production, use demonization to run process
 
+## Results
+Two terminals:
+.. image:: https://github.com/Proteusiq/advance_scraping/images/celery_in_action.png
 
-## Deployment
+Data in MongoDB
+.. image:: https://github.com/Proteusiq/advance_scraping/images/mongo_results.png
+
+## Deployment in Production
 
 Working on Docker Image. [Coming soon]
 

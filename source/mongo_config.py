@@ -6,3 +6,6 @@ CELERY_MONGODB_BACKEND_SETTINGS = {
     "database": "stocks", 
     "taskmeta_collection": "stocks_collection",
 }
+
+# Stop Results from been deleted
+CELERY_TASK_RESULT_EXPIRES = None
