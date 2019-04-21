@@ -3,8 +3,8 @@
 Using celery, mongodb and requests to show how to schedule, and store
 scraped data
 
-## Design Flow-ish
-.. image:: https://github.com/Proteusiq/advance_scraping/blob/master/images/flow_celery.png
+![Design Flow-ish]( https://github.com/Proteusiq/advance_scraping/blob/master/images/flow_celery.png)
+
 
 ## Getting Started
 
@@ -58,10 +58,10 @@ celery -A tasks.app beat --loglevel=info
 
 ## Results
 Two terminals:
-.. image:: https://github.com/Proteusiq/advance_scraping/blob/master/images/celery_in_action.png
+![Celery Worker and Beat](https://github.com/Proteusiq/advance_scraping/blob/master/images/celery_in_action.png)
 
 Data in MongoDB
-.. image:: https://github.com/Proteusiq/advance_scraping/blob/master/images/mongo_results.png
+![MongoDB](https://github.com/Proteusiq/advance_scraping/blob/master/images/mongo_results.png)
 
 ## Deployment in Production
 
