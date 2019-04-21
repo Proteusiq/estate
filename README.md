@@ -55,7 +55,7 @@ conda activate tasks
 export ALPHAVANTAGE=API_KEYS_HERE
 celery -A tasks.app beat --loglevel=info
 ```
-> Note: Don´t do this production, use demonization to run process
+> Note: Don´t do this in production, use demonization to run process
 
 #### Toy Project: Scrap Stock Data Every 5 Minutes
 
