@@ -35,7 +35,7 @@ conda env create -f environment.yml
 conda activate tasks
 ```
 
-Note: Windows uses SET ALPHAVANTAGE=API_KEYS_HERE
+> Note: Windows uses SET ALPHAVANTAGE=API_KEYS_HERE
 
 How to run:
 
