@@ -17,9 +17,9 @@ Two objectives this repo is attempting to achieve:
 ### Prerequisites
 
 Softwares:
-    MongoDB is running on localhost
-    Git and Python 3.6+.
-    Alphavantage API key
+   * MongoDB is running on localhost
+   * Git and Python 3.6+.
+   * Alphavantage API key
 
 [Alphavantage](https://www.alphavantage.co/): Get a free API key
 
