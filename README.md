@@ -35,18 +35,19 @@ conda env create -f environment.yml
 conda activate tasks
 ```
 
-> Note: Windows uses SET ALPHAVANTAGE=API_KEYS_HERE
-
 How to run:
 
-In terminal A [Worker Terminal], run celery's worker
+#### In terminal A [Worker Terminal], run celery's worker
 
 ```
 cd source
 export ALPHAVANTAGE=API_KEYS_HERE
 celery -A tasks.app worker --loglevel=info
 ```
-Open another termnial B [Beat Terminal], navigate to the project and run celery's beat(crontab-like scheduler)
+
+> Note: Windows uses SET ALPHAVANTAGE=API_KEYS_HERE
+
+#### Open another termnial B [Beat Terminal], navigate to the project and run celery's beat(crontab-like scheduler)
 
 ```
 cd source
@@ -59,8 +60,8 @@ celery -A tasks.app beat --loglevel=info
 #### Toy Project: Scrap Stock Data Every 5 Minutes
 
 This project has mainly two python files:
-    tasks.py
-    mongo_config.py
+- tasks.py
+- mongo_config.py
 
 tasks.py contains a function to get stocks using requests library
 and set celery settings. I have commented most lines to help you understand
