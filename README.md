@@ -1,7 +1,7 @@
 # Advance Scraping: Scheduling and Storing Data
 
 Using celery, mongodb and requests to show how to schedule, and store
-scraped data
+scraped data.
 
 ![Design Flow-ish]( https://github.com/Proteusiq/advance_scraping/blob/master/images/flow_celery.png)
 
@@ -10,9 +10,9 @@ scraped data
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-Two objectives this repo is attempt to do.
-* document how use MongoDB as broker and backend in Celery
-* how to schedular continous data scraping
+Two objectives this repo is attempting to achieve:
+* document how to use MongoDB as broker and backend in Celery
+* Show how to schedule a continous data scraping
 
 ### Prerequisites
 
@@ -55,6 +55,16 @@ export ALPHAVANTAGE=API_KEYS_HERE
 celery -A tasks.app beat --loglevel=info
 ```
 > Note: Don´t do this production, use demonization to run process
+
+#### Toy Project: Scrap Stock Data Every 5 Minutes
+
+This project has mainly two python files:
+    tasks.py
+    mongo_config.py
+
+tasks.py contains a function to get stocks using requests library
+and set celery settings. I have commented most lines to help you understand
+what they do.
 
 ## Results
 Two terminals:

@@ -1,3 +1,5 @@
+# Manually trigger a task
+# Used in testing the behavior of API, MongoDB, and Celery
 import time
 
 from datetime import datetime
