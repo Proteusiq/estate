@@ -30,7 +30,7 @@ Clone this repo and create a project environment with pymongo, celery, and reque
 Before running, set your API keys in environment variable called ALPHAVANTAGE
 
 ```bash
-git clone Link_to_This_Repo && cd advance_scraping
+git clone https://github.com/Proteusiq/advance_scraping.git && cd advance_scraping
 conda env create -f environment.yml
 conda activate tasks
 ```
