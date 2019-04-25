@@ -35,6 +35,14 @@ conda env create -f environment.yml
 conda activate tasks
 ```
 
+Alternative
+
+```bash
+git clone https://github.com/Proteusiq/advance_scraping.git && cd advance_scraping
+conda create -n tasks -c conda-forge python=3.7 pymongo celery requests
+conda activate tasks
+```
+
 How to run:
 
 #### In terminal A [Worker Terminal], run celery's worker
