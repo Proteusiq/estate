@@ -1,0 +1,18 @@
+### Run: source environment
+# Set up environment variables to control building and
+# running Air Docker containers
+# > Run: source environment_example
+###
+
+# databases
+export POSTGRES_USER=danpra
+export POSTGRES_PASSWORD=postgrespwd
+
+export PGADMIN_DEFAULT_EMAIL=danpra@example.com
+export PGADMIN_DEFAULT_PASSWORD=postgrespwd
+
+# airflow
+export ADMIN_USER=danpra
+export ADMIN_PASSWORD=airflowpwd
+export DEFAULT_TIMEZONE=Europe/Copenhagen
+export FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=

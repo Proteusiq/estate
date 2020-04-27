@@ -1,0 +1,5 @@
+requests
+email-validator
+psycopg2
+pandas
+ipython
