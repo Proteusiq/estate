@@ -111,7 +111,11 @@ fi
 
 case "$1" in
   webserver)
-    airflow initdb
+    airflow upgradedb
+    echo "[+] Initialization of DataBase Completed"
+    sleep 2
+    airflow create_user -r Admin -u $ADMIN_USER -e admin@example.com -f jason -l borne -p $ADMIN_PASSWORD
+    echo "[+] User: $ADMIN_USER  was given admin power"
     if [ "$AIRFLOW__CORE__EXECUTOR" = "LocalExecutor" ] || [ "$AIRFLOW__CORE__EXECUTOR" = "SequentialExecutor" ]; then
       # With the "Local" and "Sequential" executors it should all run in one container.
       airflow scheduler &
