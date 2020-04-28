@@ -1,6 +1,7 @@
-# Design
+# Advance Web Scraping
+> Using airflow to schedule, monitor, and log. Postgres to store schedule and scrapped data. Python to do the magic
 
-Structure Inspired by Danny Janz's `Containerize your whole Data Science Environment (or anything you want) with Docker-Compose`. This is a collection of different github repos modified to fit my needs.
+
 
 ## Repos that made this project possible:
 
