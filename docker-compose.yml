@@ -1,145 +1,96 @@
-version: '3.7'
+version: '2.1'
 services:
-  
-  redis:
-    image: 'redis:5.0.5'
+    redis:
+        image: 'redis:5.0.5'
+        # command: redis-server --requirepass redispass
 
-    environment:
-      - EXECUTOR=Celery
+    postgres:
+        image: postgres:9.6
+        environment:
+            - POSTGRES_USER=${POSTGRES_USER:-postgres}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+            - POSTGRES_DB=airflow
+        # Uncomment these lines to persist data on the local filesystem.
+            - PGDATA=/var/lib/postgresql/data/pgdata
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data/pgdata
 
-    networks: 
-      - awesome_net
+    webserver:
+        build:
+            context: ./airflow
+        restart: always
+        depends_on:
+            - postgres
+            - redis
+        environment:
+            - LOAD_EX=n
+            - FERNET_KEY=${FERNET_KEY}
+            - EXECUTOR=Celery
+            - POSTGRES_USER=${POSTGRES_USER:-postgres}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+            - POSTGRES_DB=airflow
+            # - REDIS_PASSWORD=redispass
+        volumes:
+            - ./airflow/dags:/usr/local/airflow/dags
+            # Uncomment to include custom plugins
+            # - ./airflow/plugins:/usr/local/airflow/plugins
+        ports:
+            - "8080:8080"
+        command: webserver
+        healthcheck:
+            test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+            interval: 30s
+            timeout: 30s
+            retries: 3
 
-  postgres:
-    build:
-      context: ./postgres
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
-      POSTGRES_DB: airflow
-      PGDATA: /data/postgres
-    ports: 
-      - "5432:5432"
-    volumes:
-      - './postgres/data:/var/lib/postgresql/data'
-    networks:
-      - awesome_net
-    restart: unless-stopped
+    flower:
+        build:
+            context: ./airflow
+        restart: always
+        depends_on:
+            - redis
+        environment:
+            - EXECUTOR=Celery
+            # - REDIS_PASSWORD=redispass
+        ports:
+            - "5555:5555"
+        command: flower
 
-  pgadmin:
-    image: dpage/pgadmin4
-    restart: always
-    depends_on:
-    - postgres
-    ports:
-    - 5050:80
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@example.com}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-    networks:
-      - awesome_net
-    restart: unless-stopped
+    scheduler:
+        build:
+            context: ./airflow
+        restart: always
+        depends_on:
+            - webserver
+        volumes:
+            - ./airflow/dags:/usr/local/airflow/dags
+            # Uncomment to include custom plugins
+            # - ./airflow/plugins:/usr/local/airflow/plugins
+        environment:
+            - LOAD_EX=n
+            - FERNET_KEY=${FERNET_KEY}
+            - EXECUTOR=Celery
+            - POSTGRES_USER=${POSTGRES_USER:-postgres}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+            - POSTGRES_DB=airflow
+            # - REDIS_PASSWORD=redispass
+        command: scheduler
 
-  airflow:
-    build:
-      context: ./airflow
-    depends_on:
-        - postgres
-    environment:
-        - LOAD_EX=n
-        - EXECUTOR=Celery # Executor: Local = LocalExecutor or Celery=CeleryExecutor.
-        - AIRFLOW__WEBSERVER__RBAC=true
-        - AIRFLOW__WEBSERVER__WORKERS=2 # 2 * NUM_CPU_CORES + 1
-        - AIRFLOW__WEBSERVER__WORKER_REFRESH_INTERVAL=1800 # Restart workers every 30min instead of 30seconds
-        - AIRFLOW__WEBSERVER__WEB_SERVER_WORKER_TIMEOUT=300 #Kill workers if they don't start within 5min instead of 2min
-        - FERNET_KEY=${FERNET_KEY} # some fernet ket. can be generated using > openssl rand -base64 32
-        - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2:${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/airflow # airflow db. can skip this if you want to use sqllite. or edit if you want to use another db like mysql
-        - POSTGRES_USER=${POSTGRES_USER:-postgres}
-        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
-        - ADMIN_PASSWORD=${ADMIN_PASSWORD:-changeme}  # password for admin user
-        # Uncomment to include extra requirements.txt placed in config map
-        - /requirements.txt=./airflow/config/requirements.txt
-
-    volumes:
-        - ./airflow/dags:/usr/local/airflow/dags
-        # Uncomment to include custom plugins
-        # - ./airflow/plugins:/usr/local/airflow/plugins
-
-    ports:
-        - "8080:8080"
-    command: webserver
-    healthcheck:
-        test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
-        interval: 30s
-        timeout: 30s
-        retries: 3
-    networks:
-      - awesome_net
-
-  flower:
-    build:
-      context: ./airflow
-    restart: always
-    depends_on:
-      - redis
-    environment:
-      - EXECUTOR=Celery
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
-
-    ports:
-      - 5555:5555
-    command: flower
-    networks:
-      - awesome_net
-
-  scheduler:
-    build:
-      context: ./airflow
-    restart: always
-    depends_on:
-      - airflow
-    volumes:
-      - ./airflow/dags:/usr/local/airflow/dags
-      # Uncomment to include custom plugins
-      # - ./airflow/plugins:/usr/local/airflow/plugins
-    environment:
-      - LOAD_EX=n
-      - FERNET_KEY=${FERNET_KEY}
-      - EXECUTOR=Celery
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
-
-    command: scheduler
-    networks:
-      - awesome_net
-
-  worker:
-    build:
-      context: ./airflow
-    restart: always
-    depends_on:
-      - scheduler
-    volumes:
-      - ./airflow/dags:/usr/local/airflow/dags
-      # Uncomment to include custom plugins
-      # - ./airflow/plugins:/usr/local/airflow/plugins
-
-
-    environment:
-      - FERNET_KEY=${FERNET_KEY}
-      - EXECUTOR=Celery
-
-    command: worker
-    networks:
-      - awesome_net
-
-
-networks:
-  awesome_net:
-    driver: bridge
-    
-volumes:
-  postgres-store:
-  dags:
+    worker:
+        build:
+            context: ./airflow
+        restart: always
+        depends_on:
+            - scheduler
+        volumes:
+            - ./airflow/dags:/usr/local/airflow/dags
+            # Uncomment to include custom plugins
+            # - ./airflow/plugins:/usr/local/airflow/plugins
+        environment:
+            - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+            - EXECUTOR=Celery
+            - POSTGRES_USER=${POSTGRES_USER:-postgres}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+            - POSTGRES_DB=airflow
+            # - REDIS_PASSWORD=redispass
+        command: worker
