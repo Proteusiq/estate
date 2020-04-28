@@ -17,7 +17,7 @@ class DF2Postgres:
                             password=os.getenv('POSTGRES_PASSWORD', 'postgrespwd'),
                             host='postgres',
                             port="5432",
-                            database="bolig_db"
+                            database="airflow"
                             )
                             
         return self

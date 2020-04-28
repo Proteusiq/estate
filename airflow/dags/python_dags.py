@@ -1,57 +1,49 @@
-"""Example DAG demonstrating the usage of the PythonOperator."""
-
-import time
-from pprint import pprint
-
+"""
+Code that goes along with the Airflow located at:
+http://airflow.readthedocs.org/en/latest/tutorial.html
+"""
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
-from airflow.utils.dates import days_ago
+from airflow.operators.bash_operator import BashOperator
+from datetime import datetime, timedelta
 
-args = {
-    'owner': 'Prayson',
-    'start_date': days_ago(2),
+
+default_args = {
+    "owner": "airflow",
+    "depends_on_past": False,
+    "start_date": datetime(2015, 6, 1),
+    "email": ["airflow@airflow.com"],
+    "email_on_failure": False,
+    "email_on_retry": False,
+    "retries": 1,
+    "retry_delay": timedelta(minutes=5),
+    # 'queue': 'bash_queue',
+    # 'pool': 'backfill',
+    # 'priority_weight': 10,
+    # 'end_date': datetime(2016, 1, 1),
 }
 
-dag = DAG(
-    dag_id='example_python_operator',
-    default_args=args,
-    schedule_interval=None,
-    #tags=['example']
-)
+dag = DAG("tutorial", default_args=default_args,
+          schedule_interval=timedelta(1))
 
+# t1, t2 and t3 are examples of tasks created by instantiating operators
+t1 = BashOperator(task_id="print_date", bash_command="date", dag=dag)
 
-# [START howto_operator_python]
-def print_context(ds, **kwargs):
-    """Print the Airflow context and ds variable from the context."""
-    pprint(kwargs)
-    print(ds)
-    return 'Whatever you return gets printed in the logs'
+t2 = BashOperator(task_id="sleep", bash_command="sleep 5", retries=3, dag=dag)
 
+templated_command = """
+    {% for i in range(5) %}
+        echo "{{ ds }}"
+        echo "{{ macros.ds_add(ds, 7)}}"
+        echo "{{ params.my_param }}"
+    {% endfor %}
+"""
 
-run_this = PythonOperator(
-    task_id='print_the_context',
-    python_callable=print_context,
+t3 = BashOperator(
+    task_id="templated",
+    bash_command=templated_command,
+    params={"my_param": "Parameter I passed in"},
     dag=dag,
-    op_args=['hello world :)!']
 )
-# [END howto_operator_python]
 
-
-# [START howto_operator_python_kwargs]
-def my_sleeping_function(random_base):
-    """This is a function that will run within the DAG execution"""
-    time.sleep(random_base)
-
-
-# Generate 5 sleeping tasks, sleeping from 0.0 to 0.4 seconds respectively
-for i in range(5):
-    task = PythonOperator(
-        task_id='sleep_for_' + str(i),
-        python_callable=my_sleeping_function,
-        op_kwargs={'random_base': float(i) / 10},
-        dag=dag,
-    )
-
-    run_this >> task
-
-# [END howto_operator_python_kwargs]
+t2.set_upstream(t1)
+t3.set_upstream(t1)
