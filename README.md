@@ -1,6 +1,7 @@
 # Advance Web Scraping
 > Using airflow to schedule, monitor, and log. Postgres to store schedule and scrapped data. Python to do the magic
 
+![advance_image](images/advance_design.jpg)
 
 
 ## Repos that made this project possible:
