@@ -19,6 +19,7 @@ class DF2Postgres:
                             port="5432",
                             database="airflow"
                             )
+        self.connection.autocommit = True
                             
         return self
 
@@ -53,8 +54,7 @@ class DF2Postgres:
             
             c.execute(query)
 
-            self.connection.commit()
-            # from SO
+            # from SO: https://stackoverflow.com/a/52124686/6858244
             # # df is the dataframe
             if len(self.df) > 0:
                 df_columns = list(self.df)
@@ -69,5 +69,5 @@ class DF2Postgres:
 
                 
                 psycopg2.extras.execute_batch(c, insert_stmt, self.df.values)
-                self.connection.commit()
+            
         

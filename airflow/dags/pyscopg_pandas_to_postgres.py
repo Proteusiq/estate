@@ -1,15 +1,11 @@
-import os
-
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
-from airflow.utils.dates import days_ago, timedelta, datetime
+from airflow.utils.dates import timedelta, datetime
 
-from sqlalchemy import create_engine
+
 import pandas as pd
 
-
-CONNECTION_URI = "postgresql+psycopg2://{os.getenv('POSTGRES_USER','danpra')}:{os.getenv('POSTGRES_PASSWORD', 'postgrespwd')}@postgres:5432/airflow"
-
+from utils.df_to_pandas import DF2Postgres
 
 # time https://airflow.apache.org/docs/1.10.3/_modules/airflow/utils/dates.html
 args = {
@@ -18,11 +14,11 @@ args = {
 }
 
 dag = DAG(
-    dag_id='dataframe_to_postgres_new',
-    description=f'Load data to postgress table {repr("boliga")}',
+    dag_id='df_to_postgres_psycopg2',
+    description=f'Load data to postgress table {repr("boliga")} using pyscopg2',
     default_args=args,
     start_date=datetime.now() - timedelta(minutes=10), # Start 10 minutes ago # days_ago(2)
-    schedule_interval='*/2 * * * *',
+    schedule_interval='*/5 * * * *',
 )
 
 
@@ -39,11 +35,8 @@ def load_data(ds, **kwargs):
                         'timex': [datetime.now(), datetime.now(), datetime.now()] })
 
 
-    with create_engine(CONNECTION_URI) as connection:
-            df.to_sql('boliga2',
-                    connection,
-                    if_exists='replace',
-                    )
+    with DF2Postgres(df=df, table_name=TABLE_NAME) as d:
+        d.send()
    
     return f'data loaded {len(df)} rows'
 
