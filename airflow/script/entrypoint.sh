@@ -111,7 +111,7 @@ fi
 
 case "$1" in
   webserver)
-    airflow upgradedb
+    airflow initdb
     echo "[+] Initialization of DataBase Completed"
     sleep 2
     airflow create_user -r Admin -u $ADMIN_USER -e admin@example.com -f jason -l borne -p $ADMIN_PASSWORD
