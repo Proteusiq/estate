@@ -1,4 +1,0 @@
-requests
-email-validator
-pandas
-ipython
