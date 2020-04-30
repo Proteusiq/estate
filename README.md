@@ -4,11 +4,11 @@
 ![advance_image](images/advance_design.jpg)
 
 ### Getting Started
-Check list to start our services first time
+Checklist to start our services
 
-- [ ] make sure that docker is running and volume mounting is enable.
+- [ ] make sure docker is running, and volume mounting is enabled.
 - [ ] git clone [advance_scraping](https://github.com/Proteusiq/advance_scraping.git)
-- [ ] set your environment variables
+- [ ] set environment variables
 - [ ] run the service with a single docker-compose command
 
 ### Git Clone
@@ -21,9 +21,9 @@ cd advance_scraping
 ### Set Environment Variables
 
 Unix users can just edit `.env` contents.
-> **WARNING**: Remember to add your .env to .gitignore. Don't share your secrets
+> **WARNING**: Remember to add your .env to .gitignore. Do not share your secrets
 
-Another way for both Unix and Windows. Change the contents of `environment_example` (unix users) and `environment_example_windows` (windows users) 
+Another way for both Unix and Windows. Change the contents of `environment_example` (Unix users) and `environment_example_windows` (Windows users) 
 
 Unix users can do:
 
@@ -31,7 +31,7 @@ Unix users can do:
 source environment_example
 ```
 
-Windows users, need to `select all` and `copy-paste` to  command line `cmd.exe`.(powershell won't work).
+Windows users need to `select all` and `copy-paste` to  command-line `cmd.exe`. (PowersShell will not work).
 
 ##### Check the environments to be set by docker-compose with:
 
@@ -47,16 +47,16 @@ docker-compose up
 
 ## UI Services:
 ![advance_image](images/airflow_dag.png)
-- ### Airflow: `address:` __localhost:8080__ `default_user:` __danpra__ `default_pwd`: __changeme__
-- ### pgAdmin: `address:` __localhost:5050__ `default_email:` __pgadmin@example.com__ `default_pwd`: __admin__
-- ### Flower: `address:` __localhost:5555__ 
+- ##### Airflow:  `address:` __localhost:8080__ `default_user:` __danpra__ `default_pwd`: __changeme__
+- ##### pgAdmin: `address:` __localhost:5050__ `default_email:` __pgadmin@example.com__ `default_pwd`: __admin__
+- ##### Flower: `address:` __localhost:5555__ 
 
 #### Postgres Admin Tool
-Head to `localhost:5050`. Login with creditials used in your environment variables. Example: `danpra@example.com` and password `postgrespwd`
+Head to `localhost:5050`. Login with credentials used in your environment variables. Example: `danpra@example.com` and password `postgrespwd`
 
 ![postgres_image](images/pgAdmin_login.png)
 
-Adding connection to `postgres` db in `pgAdmin`, click `Add New Server`. Type any name and select `Connection`. Name:Boliga > Host name/address: `postgres`: Postgres Username and Password and click `Save`
+Adding a connection to `postgres` DB in `pgAdmin`, click `Add New Server`. Type any name and select `Connection`. Name:Boliga > Host name/address: `postgres`: Postgres Username and Password and click `Save`
   
  ![postgres_image](images/pgAdmin_connection.png) 
 
@@ -78,7 +78,7 @@ docker-compose down -v
 ### Todo:
 - [ ] Add a web-scraper examples
 - [ ] Add simple Airflow examples
-- [ ] Add introduction to Airflow  README
+- [ ] Add an introduction to Airflow  README
 
 ![dev](images/dev.png)
 
