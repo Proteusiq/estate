@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 import pandas as pd
 
 
-CONNECTION_URI = f"postgresql://{os.getenv('POSTGRES_USER','danpra')}:{os.getenv('POSTGRES_PASSWORD', 'postgrespwd')}@postgres:5432/airflow"
+CONNECTION_URI = f"postgresql://{os.getenv('POSTGRES_USER','danpra')}:{os.getenv('POSTGRES_PASSWORD', 'postgrespwd')}@postgres:5432/bolig_db"
 TABLE_NAME = 'boliga'
 
 # time https://airflow.apache.org/docs/1.10.3/_modules/airflow/utils/dates.html

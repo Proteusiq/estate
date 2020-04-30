@@ -17,7 +17,7 @@ class DF2Postgres:
                             password=os.getenv('POSTGRES_PASSWORD', 'postgrespwd'),
                             host='postgres',
                             port="5432",
-                            database="airflow"
+                            database="bolig_db"
                             )
         self.connection.autocommit = True
                             
