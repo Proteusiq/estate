@@ -14,7 +14,7 @@ from pipelines.boliga import BoligaRecent
 CONNECTION_URI = (rf"postgresql://{os.getenv('POSTGRES_USER','danpra')}:"
                   rf"{os.getenv('POSTGRES_PASSWORD', 'postgrespwd')}@postgres:5432/bolig_db"
                   )
-TABLE_NAME = 'recent_bolig'
+TABLE_NAME = 'recent_bolig_{Variable.get("postal","2650")}'
 
 args = {
     'owner': 'Prayson',
