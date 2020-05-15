@@ -11,7 +11,7 @@ import sqlalchemy
 import pandas as pd
 import requests
 
-from pipelines.boliga import BoligaRecent
+from pipelines.boligax import BoligaRecent
 
 CONNECTION_URI = (f"postgresql://{os.getenv('POSTGRES_USER','danpra')}:"
                   f"{os.getenv('POSTGRES_PASSWORD', 'postgrespwd')}@postgres:5432/bolig_db"

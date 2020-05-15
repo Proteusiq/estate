@@ -1,3 +1,8 @@
+'''
+    Prototype: To be replaced
+'''
+
+
 from abc import ABC, abstractmethod
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor

@@ -9,7 +9,7 @@ import sqlalchemy
 import pandas as pd
 
 
-from pipelines.boliga import BoligaRecent
+from pipelines.boligax import BoligaRecent
 
 CONNECTION_URI = (rf"postgresql://{os.getenv('POSTGRES_USER','danpra')}:"
                   rf"{os.getenv('POSTGRES_PASSWORD', 'postgrespwd')}@postgres:5432/bolig_db"
