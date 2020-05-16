@@ -2,6 +2,7 @@ POSTGRES_USER=danpra
 POSTGRES_PASSWORD=postgrespwd
 PGADMIN_DEFAULT_EMAIL=danpra@example.com
 PGADMIN_DEFAULT_PASSWORD=postgrespwd
+BOLIG_DB=bolig_db
 ADMIN_USER=danpra
 ADMIN_PASSWORD=airflowpwd
 DEFAULT_TIMEZONE=Europe/Copenhagen

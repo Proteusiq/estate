@@ -2,6 +2,7 @@ from collections import defaultdict
 import os
 
 from airflow import DAG
+from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import datetime
 
@@ -10,9 +11,7 @@ import pandas as pd
 import requests
 
 
-CONNECTION_URI = (f"postgresql://{os.getenv('POSTGRES_USER','danpra')}:"
-                 f"{os.getenv('POSTGRES_PASSWORD', 'postgrespwd')}@postgres:5432/bolig_db"
-)
+CONNECTION_URI = BaseHook.get_connection('bolig_db').get_uri()
 TABLE_NAME = 'postal_codes'
 
 # time https://airflow.apache.org/docs/1.10.3/_modules/airflow/utils/dates.html

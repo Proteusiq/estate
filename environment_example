@@ -7,6 +7,7 @@
 # databases
 export POSTGRES_USER=danpra
 export POSTGRES_PASSWORD=postgrespwd
+export BOLIG_DB=bolig_db
 
 export PGADMIN_DEFAULT_EMAIL=danpra@example.com
 export PGADMIN_DEFAULT_PASSWORD=postgrespwd

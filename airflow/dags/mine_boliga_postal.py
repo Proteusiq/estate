@@ -2,6 +2,7 @@ import os
 
 from airflow import DAG
 from airflow.models import Variable
+from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import datetime
 
@@ -11,9 +12,7 @@ import pandas as pd
 
 from pipelines.boligax import BoligaRecent
 
-CONNECTION_URI = (rf"postgresql://{os.getenv('POSTGRES_USER','danpra')}:"
-                  rf"{os.getenv('POSTGRES_PASSWORD', 'postgrespwd')}@postgres:5432/bolig_db"
-                  )
+CONNECTION_URI = BaseHook.get_connection('bolig_db').get_uri()
 TABLE_NAME = f'recent_bolig_{Variable.get("postal","2650")}'
 
 args = {

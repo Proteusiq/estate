@@ -52,6 +52,7 @@ if [ "$AIRFLOW__CORE__EXECUTOR" != "SequentialExecutor" ]; then
     : "${POSTGRES_USER:="danpra"}"
     : "${POSTGRES_PASSWORD:="postgrespwd"}"
     : "${POSTGRES_DB:="airflow"}"
+    : "${BOLIG_DB:="bolig_db"}"
     : "${POSTGRES_EXTRAS:-""}"
     : "${ADMIN_USER:="airflow"}"
     : "${ADMIN_PASSWORD:="airflowpwd"}"
@@ -116,6 +117,9 @@ case "$1" in
     sleep 2
     airflow create_user -r Admin -u $ADMIN_USER -e admin@example.com -f jason -l borne -p $ADMIN_PASSWORD
     echo "[+] User: $ADMIN_USER  was given admin power"
+    sleep 2
+    airflow connections --add --conn_id 'bolig_db' --conn_uri "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${BOLIG_DB}"
+    echo "[+] Added $BOLIG_DB  connection uri"
     if [ "$AIRFLOW__CORE__EXECUTOR" = "LocalExecutor" ] || [ "$AIRFLOW__CORE__EXECUTOR" = "SequentialExecutor" ]; then
       # With the "Local" and "Sequential" executors it should all run in one container.
       airflow scheduler &
