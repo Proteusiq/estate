@@ -6,6 +6,7 @@ import os
 from airflow import DAG
 from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
+from airflow.models import Variable
 from airflow.utils.dates import datetime
 
 import sqlalchemy
@@ -15,8 +16,8 @@ import requests
 from pipelines.boligax import BoligaRecent
 
 CONNECTION_URI = BaseHook.get_connection('bolig_db').get_uri()
-TABLE_NAME = 'recent_bolig'
-POSTAL_TABLE = 'postal_codes'
+TABLE_NAME = 'recent_boligs'
+
 
 # time https://airflow.apache.org/docs/1.10.3/_modules/airflow/utils/dates.html
 args = {
@@ -25,31 +26,38 @@ args = {
 }
 
 
-def get_postal(**kwargs):
-    engine = sqlalchemy.create_engine(CONNECTION_URI)
-    postal = pd.read_sql(f'SELECT "Postal" from {POSTAL_TABLE}', engine)
-    return postal['Postal'].tolist()
 
 
 def get_bolig(postal, **kwargs):
+
 
     engine = sqlalchemy.create_engine(CONNECTION_URI)
     bolig = BoligaRecent(url='https://api.boliga.dk/api/v2/search/results')
 
     bolig.get_pages(postal=postal, verbose=True)
+    bolig.store.drop(columns=['images'], inplace=True)
+    bolig.store.columns = bolig.store.columns.str.lower() #postgres query roomSize will require "roomSize"
     bolig.store.to_sql(TABLE_NAME, engine, if_exists='append')
 
     print(f'There were {len(bolig.store)} estates found in {postal}')
     engine.dispose()
 
 
-def process_completed(**kwargs):
-    print('Mining Completed')
-    return f'Completed'
+def process_notify(engine=None, **kwargs):
+    engine = sqlalchemy.create_engine(CONNECTION_URI)
+    df = pd.read_sql(f'SELECT * FROM {TABLE_NAME}', engine)
+    engine.dispose()
+    print(f'Mining {TABLE_NAME} has {len(df)} rows at {datetime.now()}')
+    return f'Data sending completed'
 
 
+#if the Variable are not entered in UI Variable key:postals value: {"whatever": "2650","bla":"2400"}
+DEFAULT_POSTAL = {"1": "2200", "2": "2450"}
+
+postals = Variable.get("postals", DEFAULT_POSTAL,
+                       deserialize_json=True)
 with DAG(
-    dag_id='coming_soon_populate_estates',
+    dag_id='multiple_postals_estates',
     description=f'Populate estates to {TABLE_NAME} working on flow design',
     default_args=args,
     # Start 10 minutes ago # days_ago(2)
@@ -60,25 +68,19 @@ with DAG(
     push_bolig_data = [PythonOperator(
         task_id=f'load_{postal}_bolig_data',
         python_callable=get_bolig,
-        op_args=postal,
+        op_args=[postal,],
         dag=dag,
         provide_context=True
 
-    ) for postal in get_postal()]
+    ) for postal in [post for _, post in postals.items()]]
 
-    get_postal = PythonOperator(
-        task_id='get_postal',
-        dag=dag,
-        python_callable=get_postal,
-        provide_context=True
-    )
 
     process_completed = PythonOperator(
         task_id='mining_completed',
         dag=dag,
-        python_callable=process_completed,
+        python_callable=process_notify,
         provide_context=True
     )
 
 
-# get_postal >> push_bolig_data >> process_completed
+push_bolig_data >> process_completed
