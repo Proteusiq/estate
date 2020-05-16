@@ -13,22 +13,27 @@ from pipelines.boliger.bolig import Bolig
  #      get_page: Task: Update params and requests GET|POST logic in get_pages
  #      get_pages: Task: Update total pages logic only      
 
-class BoligaRecent(Bolig):
+class Boliga(Bolig):
     
     '''
     Bolig Data From Home.dk API
 
     Network:
         Request URL:  https://api.boliga.dk/api/v2/search/results?pageSize=50&page=2
+        Request URL:  https://api.boliga.dk/api/v2/sold/search/results?pageSize=50&page=2
+
 
     Usage:
     ```python
     # instantiate a class
-    boliga = BoligaRecent(url='https://api.boliga.dk/api/v2/search/results')
+    boliga_recent = BoligaRecent(url='https://api.boliga.dk/api/v2/search/results')
+
+    # or
+    boliga_sold = BoligaSold(url='https://api.boliga.dk/api/v2/sold/search/results')
     
     # one page per call 
-    print('[+] Start single thread calls\n')
-    _ = {boliga.get_page(page=page, pagesize=15, verbose=True) for page in range(0,10)}
+    print('[+] Start single thread calls\n for boliga recent prices estates')
+    _ = {boliga_recent.get_page(page=page, pagesize=15, verbose=True) for page in range(0,10)}
 
     ## store data to df
     df = boliga.store
@@ -37,9 +42,9 @@ class BoligaRecent(Bolig):
 
     # multipe pages per call
     workers = 6
-    print(f'[+] Start {workers} threads calls\n')
-    boliga.get_pages(start_page=6,end_page=10, pagesize=200, workers=6, verbose=True)
-    dt = boliga.store
+    print(f'[+] Start {workers} threads calls\n for boliga sold estates')
+    boliga_sold.get_pages(start_page=6,end_page=10, pagesize=200, workers=6, verbose=True)
+    dt = boliga_sold.store
     print(dt.dtypes) # data types
     ```    
     '''    
@@ -102,7 +107,14 @@ class BoligaRecent(Bolig):
             func = lambda pages: {self.get_page(page, pagesize, verbose=verbose) for page in pages}
             pages_split = np.array_split(np.arange(start_page,total_pages+1), workers)
         
-            with ThreadPoolExecutor(max_workers=workers) as executor:
+            with ThreadPoolExecutor(max_workers=min(32,workers)) as executor:
                 _ = {executor.submit(func,split) for split in pages_split}
         
         return self
+
+
+class BoligaRecent(Boliga):
+    pass
+
+class BoligaSold(Boliga):
+    pass

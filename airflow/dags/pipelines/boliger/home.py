@@ -99,7 +99,7 @@ class Home(Bolig):
             func = lambda pages: {self.get_page(page, pagesize, verbose=verbose) for page in pages}
             pages_split = np.array_split(np.arange(start_page,total_pages+1), workers)
         
-            with ThreadPoolExecutor(max_workers=workers) as executor:
+            with ThreadPoolExecutor(max_workers=min(32,workers)) as executor:
                 _ = {executor.submit(func,split) for split in pages_split}
         
         return self
