@@ -73,6 +73,8 @@ def get_postal(only_postal:bool=True, **kwargs) -> pd.DataFrame:
     return f'postal data pushed to {TABLE_NAME}'
 
 def check_postal(**kwargs):
+    """check if the postal code database exists and populates
+    """
 
     engine = sqlalchemy.create_engine(CONNECTION_URI)
 
@@ -83,7 +85,7 @@ def check_postal(**kwargs):
 
         print(f'postal data with {df.shape} exits')
         engine.dispose()
-        
+
     except sqlalchemy.exc.ProgrammingError as e:
         print(e.__dict__['statement'])
         return False

@@ -11,8 +11,8 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import datetime
 import sqlalchemy
 import pandas as pd
-
 from pipelines.boligax import BoligaRecent
+
 
 CONNECTION_URI = BaseHook.get_connection('bolig_db').get_uri()
 TABLE_NAME = f'recent_bolig_{Variable.get("postal",2650)}'
@@ -23,7 +23,15 @@ args = {
 }
 
 
-def get_bolig(postal, engine=None, **kwargs):
+def get_bolig(postal:int, engine:sqlalchemy.types.TypeEngine=None, **kwargs) -> None:
+    """get bolig[estate] from a given postal code
+
+    Arguments:
+        postal {int} -- Danish postal code: e.g. 2560
+
+    Keyword Arguments:
+        engine {sqlalchemy.types.TypeEngine} -- Connection Engine to Database (default: {None})
+    """
     
     bolig = BoligaRecent(url='https://api.boliga.dk/api/v2/search/results')
 
@@ -36,7 +44,12 @@ def get_bolig(postal, engine=None, **kwargs):
     print(f'There were {len(bolig.store)} estates found in {postal}')
     
 
-def process_completed(engine=None, **kwargs):
+def process_completed(engine:sqlalchemy.types.TypeEngine = None, **kwargs) -> None:
+    """checks if data populating was complete
+
+    Keyword Arguments:
+        engine {sqlalchemy.types.TypeEngine} -- Connection Engine to Database (default: {None})
+    """
     engine = sqlalchemy.create_engine(CONNECTION_URI)
     df = pd.read_sql(f'SELECT * FROM {TABLE_NAME}', engine)
     engine.dispose()
