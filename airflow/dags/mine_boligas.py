@@ -1,25 +1,24 @@
-# Working progress
-
-from collections import defaultdict
-import os
+"""
+[Deprecated]: Use pipelines.boliger.boliga
+This script contains an example of self generating tasks from UI Variable
+input of multiple zipcodes
+"""
 
 from airflow import DAG
 from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
 from airflow.models import Variable
 from airflow.utils.dates import datetime
-
 import sqlalchemy
 import pandas as pd
-import requests
-
 from pipelines.boligax import BoligaRecent
+
 
 CONNECTION_URI = BaseHook.get_connection('bolig_db').get_uri()
 TABLE_NAME = 'recent_boligs'
 
 
-# time https://airflow.apache.org/docs/1.10.3/_modules/airflow/utils/dates.html
+# default args
 args = {
     'owner': 'Prayson',
     'catchup_by_default': False,
@@ -27,9 +26,12 @@ args = {
 
 
 
-
 def get_bolig(postal, **kwargs):
+    """get bolig[estate] 
 
+    Arguments:
+        postal {[type]} -- [description]
+    """
 
     engine = sqlalchemy.create_engine(CONNECTION_URI)
     bolig = BoligaRecent(url='https://api.boliga.dk/api/v2/search/results')
@@ -51,8 +53,8 @@ def process_notify(engine=None, **kwargs):
     return f'Data sending completed'
 
 
-#if the Variable are not entered in UI Variable key:postals value: {"whatever": "2650","bla":"2400"}
-DEFAULT_POSTAL = {"1": "2200", "2": "2450"}
+#if the Variable are not entered in UI Variable key:postals value: {"whatever": 2650,"bla":2400}
+DEFAULT_POSTAL = {"1": 2200, "2": 2450}
 
 postals = Variable.get("postals", DEFAULT_POSTAL,
                        deserialize_json=True)

@@ -13,7 +13,7 @@ import pandas as pd
 from pipelines.boligax import BoligaRecent
 
 CONNECTION_URI = BaseHook.get_connection('bolig_db').get_uri()
-TABLE_NAME = f'recent_bolig_{Variable.get("postal","2650")}'
+TABLE_NAME = f'recent_bolig_{Variable.get("postal",2650)}'
 
 args = {
     'owner': 'Prayson',
@@ -44,7 +44,7 @@ def process_completed(engine=None, **kwargs):
 
 
 with DAG(
-    dag_id=f'populate_{Variable.get("postal","2650")}_estates',
+    dag_id=f'populate_{Variable.get("postal",2650)}_estates',
     description=f'Populate estates to {TABLE_NAME}',
     default_args=args,
     # Start 10 minutes ago # days_ago(2)
@@ -53,9 +53,9 @@ with DAG(
 ) as dag:
 
     push_bolig_postal = PythonOperator(
-        task_id=f'load_{Variable.get("postal","2650")}_bolig_data',
+        task_id=f'load_{Variable.get("postal",2650)}_bolig_data',
         python_callable=get_bolig,
-        op_args=[Variable.get("postal", "2650"),],
+        op_args=[Variable.get("postal", 2650),],
         dag=dag,
         provide_context=True
     )

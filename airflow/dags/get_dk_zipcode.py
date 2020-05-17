@@ -54,6 +54,9 @@ def get_postal(only_postal:bool=True, **kwargs) -> pd.DataFrame:
     else:
         df = pd.DataFrame(post_data)
 
+    df.columns = df.columns.str.lower()
+    df['postal'] = df['postal'].astype(int)
+
     engine = sqlalchemy.create_engine(CONNECTION_URI)
     df.to_sql(TABLE_NAME, engine, if_exists='replace')
     engine.dispose()
