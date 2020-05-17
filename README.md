@@ -39,11 +39,16 @@ Windows users need to `select all` and `copy-paste` to  command-line `cmd.exe`. 
 docker-compose config
 ```
 
+See: (docker-compose)[https://docs.docker.com/compose/reference/overview/] options.
+
 ### Start services with a single command:
 
 ```bash
 docker-compose up
 ```
+
+Note: You can run the services in detach mode. `--detach` or `-d` flag. This will leave services running.
+See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 
 ## UI Services:
 ![advance_image](images/airflow_dag.png)
@@ -74,7 +79,7 @@ Use docker-compose down -v to remove also the volumes.
 ```bash
 docker-compose down -v
 ```
-
+See: [docker-compose down](https://docs.docker.com/compose/reference/down/) options
 ### Web Scraping and Design Pattern [Opinionated Rumbling]
 A lazy programmer, like me, loves to write less yet comprehensive codes. (:) Yes, I said it). Design Pattern in Python is not as useful and in most cases, an overkill, as other languages like Java, C#, and C++. In order to design a simple bolig[_danish for estate_] scrapping tool from different estate websites in Denmark, I decided to use a bit of Singleton Pattern and Abstract Factory Pattern.
 
