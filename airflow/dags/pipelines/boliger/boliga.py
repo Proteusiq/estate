@@ -113,5 +113,6 @@ class Boliga(Bolig):
 class BoligaRecent(Boliga):
     pass
 
+
 class BoligaSold(Boliga):
     pass

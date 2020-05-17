@@ -137,5 +137,6 @@ class Services(Bolig):
 class Estate(Services):
     pass
 
+
 class Nybolig(Services):
     pass
