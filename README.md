@@ -98,6 +98,8 @@ Estate(Services)        # initiate with estate recent home as url
 - [X] Add a web-scraper examples
 - [ ] Add simple Airflow examples
 - [ ] Add an introduction to Airflow  README
+- [ ] Add custom error handling class
+- [ ] Add tests Airflow dags and Scrapers
 
 ![dev](images/dev.png)
 
