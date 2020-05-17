@@ -1,5 +1,5 @@
 """
-[Deprecated]: Use pipelines.boliger.boliga
+[Deprecated]: `pipelines.boligax` is deprecated. Use `pipelines.boliger.boliga`
 This script contains an example of self generating tasks from UI Variable
 input of multiple zipcodes
 """

@@ -2,12 +2,15 @@
 PyData Example: Advance Web Scraping
         Build API for end-user One Class to Rule them all 
         Note: Use for educational purposes only
+Using Design Patterns
+        Singleton Design Pattern
+        Abstract Factory Pattern
+        Factory Method Pattern
 '''
 
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-
 import numpy as np
 import pandas as pd
 from requests import Session
@@ -15,6 +18,10 @@ from requests import Session
 
 
 class Bolig(ABC):
+    """Global point of access to all Bolig related classes
+        The abstract class to which bolig classes will be built on by
+        overiding only get_page and get_pages method
+    """
 
     def __init__(self, url, headers=None):
         

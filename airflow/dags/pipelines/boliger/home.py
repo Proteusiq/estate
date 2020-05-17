@@ -2,7 +2,6 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import numpy as np
 import pandas as pd
-
 from pipelines.boliger.bolig import Bolig
 
 # Building API to Home.dk  
