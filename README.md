@@ -39,7 +39,7 @@ Windows users need to `select all` and `copy-paste` to  command-line `cmd.exe`. 
 docker-compose config
 ```
 
-See: (docker-compose)[https://docs.docker.com/compose/reference/overview/] options.
+See: [docker-compose](https://docs.docker.com/compose/reference/overview/) options.
 
 ### Start services with a single command:
 
