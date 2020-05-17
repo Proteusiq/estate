@@ -1,20 +1,22 @@
-from collections import defaultdict
-import os
+"""
+This script contains an example of populating Danish zipcodes from dawa api
+"""
 
+
+from collections import defaultdict
 from airflow import DAG
 from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import datetime
-
-import sqlalchemy  
 import pandas as pd
 import requests
+import sqlalchemy
 
 
 CONNECTION_URI = BaseHook.get_connection('bolig_db').get_uri()
 TABLE_NAME = 'postal_codes'
 
-# time https://airflow.apache.org/docs/1.10.3/_modules/airflow/utils/dates.html
+
 args = {
     'owner': 'Prayson',
     'catchup_by_default': False,
@@ -22,19 +24,26 @@ args = {
 
 
 def get_postal(only_postal:bool=True, **kwargs) -> pd.DataFrame:
-    '''
-    Simple function that returns DK postal codes for DAWA. If only_post is false,
-    postal code name, kommune, latitude and longitude are returned
-    
-    how to use:
-    df = get_postal(only_postal=False)
-    '''
+    """Populata Danish zipcodes
+    Simple function that returns DK postal codes for DAWA API. 
+
+    Keyword Arguments:
+        only_postal {bool} -- return only zipcode without metadata (default: {True})
+
+    Returns:
+        pd.DataFrame -- DataFrame with all danish zipcodes
+
+    Usage:
+         
+        >>> zipcodes = get_postal(only_postal=False)
+    """
+  
 
     post_data = defaultdict(list)
-    uri = 'http://dawa.aws.dk/postnumre'
+    URI = 'http://dawa.aws.dk/postnumre'
 
     with requests.Session() as httpx:
-        r = httpx.get(uri)
+        r = httpx.get(URI)
 
     assert r.ok, 'Connection Error'
 
@@ -70,10 +79,11 @@ def check_postal(**kwargs):
     print(f'checking if postal data is in {TABLE_NAME}')
     
     try:
-        df = pd.read_sql(f'SELECT * FROM {TABLE_NAME}_no', engine)
+        df = pd.read_sql(f'SELECT * FROM {TABLE_NAME}', engine)
 
         print(f'postal data with {df.shape} exits')
         engine.dispose()
+        
     except sqlalchemy.exc.ProgrammingError as e:
         print(e.__dict__['statement'])
         return False

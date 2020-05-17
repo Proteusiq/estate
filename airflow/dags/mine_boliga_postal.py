@@ -1,14 +1,16 @@
-import os
+"""
+[Deprecated]: Use pipelines.boliger.boliga
+This script contains an example of self generating task from UI Variable
+input of single zipcode
+"""
 
 from airflow import DAG
 from airflow.models import Variable
 from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import datetime
-
 import sqlalchemy
 import pandas as pd
-
 
 from pipelines.boligax import BoligaRecent
 
