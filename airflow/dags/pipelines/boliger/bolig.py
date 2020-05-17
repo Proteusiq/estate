@@ -5,7 +5,6 @@ PyData Example: Advance Web Scraping
 Using Design Patterns
         Singleton Design Pattern
         Abstract Factory Pattern
-        Factory Method Pattern
 '''
 
 from abc import ABC, abstractmethod
