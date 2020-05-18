@@ -32,6 +32,11 @@ def send_bolig(bolig, table, **kwargs):
     
     # postgres query roomSize will require "roomSize"
     bolig.columns = bolig.columns.str.lower()
+
+    # columns with dict causes issues. stringfy thme
+    columns = bolig.select_dtypes('object').columns
+    bolig[columns] = bolig[columns].astype(str)
+
     engine = sqlalchemy.create_engine(CONNECTION_URI)
     bolig.to_sql(table, engine, if_exists='append')
     print(f'There were {len(bolig)} estates send to {table}')
@@ -60,7 +65,7 @@ def bolig_from_home(**kwargs):
     print(f'[+] Start {params["workers"]} threads for {params["pagesize"]} pagesize per call: '
           f'start at page {params["start_page"]} and at page {params["end_page"]} \n')
     homes.get_pages(**params)
-    homes.store.drop(columns=['floorPlan', 'pictures'], inplace=True)
+    # homes.store.drop(columns=['floorPlan', 'pictures'], inplace=True)
 
     send_bolig(homes.store, 'home')
     print(f'Data gathered {homes.store.shape[0]} rows\n')
@@ -89,8 +94,8 @@ def bolig_from_estate(**kwargs):
     print(f'[+] Start {params["workers"]} threads for {params["pagesize"]} pagesize per call: '
           f'start at page {params["start_page"]} and at page {params["end_page"]} \n')
     estate.get_pages(**params)
-    estate.store.drop(
-        columns=['ImageReference', 'FloorPlanImageReference'], inplace=True)
+    # estate.store.drop(
+    #     columns=['ImageReference', 'FloorPlanImageReference'], inplace=True)
 
     send_bolig(estate.store, 'estate')
     print(f'Data gathered {estate.store.shape[0]} rows\n')
@@ -120,8 +125,8 @@ def bolig_from_nybolig(**kwargs):
     print(f'[+] Start {params["workers"]} threads for {params["pagesize"]} pagesize per call: '
           f'start at page {params["start_page"]} and at page {params["end_page"]} \n')
     nybolig.get_pages(**params)
-    nybolig.store.drop(
-        columns=['ImageReference', 'FloorPlanImageReference',  ], inplace=True)
+    # nybolig.store.drop(
+    #     columns=['ImageReference', 'FloorPlanImageReference',  ], inplace=True)
 
     send_bolig(nybolig.store, 'nybolig')
     print(f'Data gathered {nybolig.store.shape[0]} rows\n')
