@@ -23,7 +23,7 @@ cd advance_scraping
 Unix users can just edit `.env` contents.
 > **WARNING**: Remember to add your .env to .gitignore. Do not share your secrets
 
-Another way for both Unix and Windows. Change the contents of `environment_example` (Unix users) and `environment_example_windows` (Windows users) 
+Another way for both Unix and Windows. Change the contents of `environment_example` (Unix users) and `environment_example_windows.bat` (Windows users) 
 
 Unix users can do:
 
@@ -31,7 +31,8 @@ Unix users can do:
 source environment_example
 ```
 
-Windows users need to `select all` and `copy-paste` to  command-line `cmd.exe`. (PowersShell will not work).
+Windows users can just type `environment_example.windows.bat` on CMD.exe. This will set the variables and start the services in the background.
+Comment Session 3.
 
 ##### Check the environments to be set by docker-compose with:
 
@@ -48,6 +49,7 @@ docker-compose up
 ```
 
 Note: You can run the services in detach mode. `--detach` or `-d` flag. This will leave services running.
+Windows users. Skip above, if you have started the services with batch strip. You can see logs with `docker-compose logs -f`
 See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 
 ## UI Services:
