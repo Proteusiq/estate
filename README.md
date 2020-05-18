@@ -32,7 +32,7 @@ source environment_example
 ```
 
 Windows users can just type `environment_example.windows.bat` on CMD.exe. This will set the variables and start the services in the background.
-Comment Session 3.
+Windows users can skip starting the serives. If you want to start the services manually, Comment Session 3 in `environment_example_windows.bat`
 
 ##### Check the environments to be set by docker-compose with:
 
