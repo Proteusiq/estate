@@ -40,7 +40,7 @@ services:
             - LOAD_EX=n
             - FERNET_KEY=${FERNET_KEY}
             - EXECUTOR=Celery
-            # - AIRFLOW__WEBSERVER__RBAC=true
+            - AIRFLOW__WEBSERVER__RBAC=true
             - AIRFLOW__WEBSERVER__WORKERS=2
             - AIRFLOW__WEBSERVER__WORKER_REFRESH_INTERVAL=1800
             - AIRFLOW__WEBSERVER__WEB_SERVER_WORKER_TIMEOUT=300
