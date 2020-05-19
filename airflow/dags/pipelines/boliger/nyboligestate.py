@@ -23,7 +23,7 @@ class Services(Bolig):
             'isRental': False,
             'mustBeSold': False,
             'mustBeInProgress': False,
-            'siteName': 'Estate|Nybolgig',
+            'siteName': 'Estate|Nybolig',
             'take': 100,
             'skip': 0,
             'sort': 0

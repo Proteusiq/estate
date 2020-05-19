@@ -13,7 +13,7 @@ from pipelines.boliger.bolig import Bolig
 class Boliga(Bolig):
     
     '''
-    Bolig Data From Home.dk API
+    Bolig Data From Boliga.dk API
 
     Network:
         Request URL:  https://api.boliga.dk/api/v2/search/results?pageSize=50&page=2
@@ -48,7 +48,7 @@ class Boliga(Bolig):
 
 
     def get_page(self, page=0, pagesize=100 ,verbose=False):
-        '''Gather Data From Home API
+        '''Gather Data From Boliga API
             page:int page number. default value 0
             pagesize:int number of boligs in a page. default value 100
             verbose:bool print mining progress. default value False
