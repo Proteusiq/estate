@@ -58,8 +58,10 @@ See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 - ##### pgAdmin: `address:` __localhost:5050__ `default_email:` __pgadmin@example.com__ `default_pwd`: __admin__
 - ##### Flower: `address:` __localhost:5555__ 
 
+#### Airflow UI
+Head to `localhost:8080` on your browser. Login with credentials used in your environment ADMIN_USER and ADMIN_PASSWORD variables. Example: `danpra` and password `airflowpwd` 
 #### Postgres Admin Tool
-Head to `localhost:5050`. Login with credentials used in your environment variables. Example: `danpra@example.com` and password `postgrespwd`
+Head to `localhost:5050`. Login with credentials used in your environment PGADMIN_DEFAULT_EMAIL and PGADMIN_DEFAULT_PASSWORD variables. Example: `danpra@example.com` and password `postgrespwd`
 
 ![postgres_image](images/pgAdmin_login.png)
 
