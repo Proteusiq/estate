@@ -50,7 +50,7 @@ docker-compose up
 
 Note: _Only the initial build_ will take awhile. Go grap a cup of coffee as docker downloads and install necessary tools. 
 You can run the services in detach mode. `--detach` or `-d` flag. This will leave services running.
-Windows users. Skip above, if you have started the services with batch strip. You can see logs with `docker-compose logs -f`
+Windows users. Skip above, if you have started the services with batch script. You can see logs with `docker-compose logs -f`
 See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 
 ## UI Services:
