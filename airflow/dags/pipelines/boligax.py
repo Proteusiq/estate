@@ -1,5 +1,6 @@
 '''
     Prototype: To be replaced
+    Contains two major codes: thread and unnessary data copy: bug > pd.DataFrame is not thread safe, flow: pd.append used in loop
 '''
 
 

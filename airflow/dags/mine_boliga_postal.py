@@ -2,6 +2,8 @@
 [Deprecated]: Use pipelines.boliger.boliga
 This script contains an example of self generating task from UI Variable
 input of single zipcode
+
+Contains two major codes: thread and unnessary data copy: bug > pd.DataFrame is not thread safe, flow: pd.append used in loop
 """
 
 from airflow import DAG
@@ -36,13 +38,21 @@ def get_bolig(postal:int, engine:sqlalchemy.types.TypeEngine=None, **kwargs) -> 
     bolig = BoligaRecent(url='https://api.boliga.dk/api/v2/search/results')
 
     bolig.get_pages(postal=postal, verbose=True)
-    bolig.store.drop(columns=['images'], inplace=True)
-    engine = sqlalchemy.create_engine(CONNECTION_URI)
-    bolig.store.to_sql(TABLE_NAME, engine, if_exists='append')
-    engine.dispose()
 
-    print(f'There were {len(bolig.store)} estates found in {postal}')
+    if not bolig.store.empty:
     
+        # columns with dict causes issues. stringfy thme
+        columns = bolig.store.select_dtypes('object').columns
+        bolig.store[columns] = bolig.store[columns].astype(str)
+
+        engine = sqlalchemy.create_engine(CONNECTION_URI)
+        bolig.store.to_sql(TABLE_NAME, engine, if_exists='append')
+        engine.dispose()
+
+        print(f'There were {len(bolig.store)} estates found in {postal}')
+    else:
+        print(f'There were no estates found in {postal}')
+        
 
 def process_completed(engine:sqlalchemy.types.TypeEngine = None, **kwargs) -> None:
     """checks if data populating was complete

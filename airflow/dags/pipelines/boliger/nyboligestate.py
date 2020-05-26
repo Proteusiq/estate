@@ -44,16 +44,16 @@ class Services(Bolig):
     _ = {estate.get_page(page=page, pagesize=15, verbose=True) for page in range(0,10)}
 
     ## store data to df
-    df = estate.store
+    df = pd.concat(estate.store.values(), ignore_index=True)
     print(f'Data Stored {df.shape[0]} rows from estate.dk\n')
-    print(f'Data Stored {nybolig.store.shape[0]} rows from nybolig.dk\n')
+    print(f'Data Stored {pd.concat(nybolig.store.values(), ingore_index=True).shape[0]} rows from nybolig.dk\n')
 
 
     # multipe pages per call
     workers = 6
     print(f'[+] Start {workers} threads calls\n')
     estate.get_pages(start_page=6,end_page=10, pagesize=200, workers=6, verbose=True)
-    dt = estate.store
+    dt = estate.DataFrame
     print(dt.dtypes) # data types
     ```    
     '''    
@@ -64,6 +64,8 @@ class Services(Bolig):
             page:int page number. default value 0
             pagesize:int number of boligs in a page. default value 100
             verbose:bool print mining progress. default value False
+
+        Returns: self.store: list of DataFrame
         '''
         
         take = pagesize
@@ -88,15 +90,14 @@ class Services(Bolig):
         if r.ok:
             data = r.json()
             
-            self.store = self.store.append(
-                    pd.DataFrame(data.get('Results')), ignore_index=True)
+            self.store[page] = pd.DataFrame(data.get('Results'))
             self.max_pages = data.get('TotalAmountOfResults')
 
         else:
             self.store
             
         if verbose:
-            print(f'[+] Gathering data from page {page:}.{" ":>5}Found {len(self.store):>5} estates'
+            print(f'[+] Gathering data from page {page:}.{" ":>5}Found {len(self.store)*pagesize:>5} estates'
                  f'{" ":>3}Time {datetime.now().strftime("%d-%m-%Y %H:%M:%S")}')
 
         return self
@@ -109,6 +110,8 @@ class Services(Bolig):
             end_page:int page number to stop. default value None
             pagesize:int number of boligs per page. default valeu 100
             verbose:bool print mining progress. default value False
+
+        Returns: self.DataFrame
         '''
         
         # Make the first call to get total number of pages for split call pagesize split
@@ -130,7 +133,12 @@ class Services(Bolig):
         
             with ThreadPoolExecutor(max_workers=min(32,workers)) as executor:
                 _ = {executor.submit(func,split) for split in pages_split}
-        
+
+        if len(self.store):
+            self.DataFrame = pd.concat(self.store.values(), ignore_index=True)
+        else:
+            self.DataFrame = pd.DataFrame([])
+
         return self
 
 

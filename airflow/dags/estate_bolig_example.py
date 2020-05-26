@@ -29,7 +29,9 @@ CONNECTION_URI = BaseHook.get_connection('bolig_db').get_uri()
 
 def send_bolig(bolig, table, **kwargs):
 
-    
+    if bolig.empty:
+        return f'No DataFrame to send to {table}'
+
     # postgres query roomSize will require "roomSize"
     bolig.columns = bolig.columns.str.lower()
 
@@ -65,10 +67,10 @@ def bolig_from_home(**kwargs):
     print(f'[+] Start {params["workers"]} threads for {params["pagesize"]} pagesize per call: '
           f'start at page {params["start_page"]} and at page {params["end_page"]} \n')
     homes.get_pages(**params)
-    # homes.store.drop(columns=['floorPlan', 'pictures'], inplace=True)
+    # homes.DataFrame.drop(columns=['floorPlan', 'pictures'], inplace=True)
 
-    send_bolig(homes.store, 'home')
-    print(f'Data gathered {homes.store.shape[0]} rows\n')
+    send_bolig(homes.DataFrame, 'home')
+    print(f'Data gathered {homes.DataFrame.shape[0]} rows\n')
 
 
 def bolig_from_estate(**kwargs):
@@ -94,11 +96,11 @@ def bolig_from_estate(**kwargs):
     print(f'[+] Start {params["workers"]} threads for {params["pagesize"]} pagesize per call: '
           f'start at page {params["start_page"]} and at page {params["end_page"]} \n')
     estate.get_pages(**params)
-    # estate.store.drop(
+    # estate.DataFrame.drop(
     #     columns=['ImageReference', 'FloorPlanImageReference'], inplace=True)
 
-    send_bolig(estate.store, 'estate')
-    print(f'Data gathered {estate.store.shape[0]} rows\n')
+    send_bolig(estate.DataFrame, 'estate')
+    print(f'Data gathered {estate.DataFrame.shape[0]} rows\n')
 
 
 def bolig_from_nybolig(**kwargs):
@@ -125,15 +127,43 @@ def bolig_from_nybolig(**kwargs):
     print(f'[+] Start {params["workers"]} threads for {params["pagesize"]} pagesize per call: '
           f'start at page {params["start_page"]} and at page {params["end_page"]} \n')
     nybolig.get_pages(**params)
-    # nybolig.store.drop(
+    # nybolig.DataFrame.drop(
     #     columns=['ImageReference', 'FloorPlanImageReference',  ], inplace=True)
 
-    send_bolig(nybolig.store, 'nybolig')
-    print(f'Data gathered {nybolig.store.shape[0]} rows\n')
+    send_bolig(nybolig.DataFrame, 'nybolig')
+    print(f'Data gathered {nybolig.DataFrame.shape[0]} rows\n')
+
+def bolig_from_boliga(**kwargs):
+    # Home example
+    api_name = 'boliga.dk Sold'
+
+    print(f'\n[+] Using {api_name} to demostrate advance web scraping ideas\n')
+
+    # instantiate a class
+    boliga = BoligaSold(url='https://api.boliga.dk/api/v2/sold/search/results')
+
+    # multipe pages per call
+    params = dict(
+        workers = 5,
+        start_page = 10,
+        end_page = 25,
+        pagesize = 500,
+        verbose = True,
+    )
+
+    params.update({}) # update from ui
+
+    print(f'[+] Start {params["workers"]} threads for {params["pagesize"]} pagesize per call: '
+          f'start at page {params["start_page"]} and at page {params["end_page"]} \n')
+    boliga.get_pages(**params)
+    
+
+    send_bolig(boliga.DataFrame, 'boliga')
+    print(f'Data gathered {boliga.DataFrame.shape[0]} rows\n')
 
 
 with DAG(
-    dag_id='example_from_home_estate_nybolig',
+    dag_id='example_from_home_estate_nybolig_boliga',
     description=f'Populate data from home.dk estate.dk and nybolig.dk',
     default_args=args,
     # Start 10 minutes ago # days_ago(2)
@@ -168,5 +198,14 @@ with DAG(
 
     )
 
+    push_boliga_data = PythonOperator(
+        task_id='load_sold_boliga_data',
+        python_callable=bolig_from_boliga,
+        op_kwargs={},
+        dag=dag,
+        provide_context=True
 
-push_home_data >> push_estate_data >> push_nybolig_data
+    )
+
+
+push_home_data >> [push_estate_data, push_nybolig_data] >> push_boliga_data 

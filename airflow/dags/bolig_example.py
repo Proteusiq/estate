@@ -2,7 +2,7 @@
 Main example of using the design
     Note: Use for educational purposes only
 '''
-
+import pandas as pd # Needed for single threads
 from pipelines.boliger import BoligaRecent
 from pipelines.boliger import BoligaSold
 from pipelines.boliger import Estate
@@ -23,8 +23,8 @@ homes = Home(url='https://home.dk/umbraco/backoffice/home-api/Search')
 print('[+] Start single thread calls: page 0-6\n')
 _ = {homes.get_page(page=page, pagesize=15, verbose=True) for page in range(0,6)}
 
-## store data to df
-df = homes.store
+## stores data to df
+df = pd.concat(homes.store.values(), ignore_index=True)
 print(f'Data gathed {df.shape[0]} rows\n')
 
 
@@ -36,7 +36,7 @@ page_size=15
 
 print(f'[+] Start {workers} threads for {page_size} pagesize per call: start at page {start_page} and at page {end_page} \n')
 homes.get_pages(start_page=start_page, end_page=end_page, pagesize=page_size, workers=workers, verbose=True)
-print(f'Data gathered {homes.store.shape[0]} rows\n')
+print(f'Data gathered {homes.DataFrame.shape[0]} rows\n')
 
 
 
@@ -54,9 +54,9 @@ boliga_recent = BoligaRecent(url='https://api.boliga.dk/api/v2/search/results')
 print('[+] Start single thread calls: page 0-9\n')
 _ = {boliga_recent.get_page(page=page, pagesize=15, verbose=True) for page in range(0,10)}
 
-## store data to df
-df = boliga_recent.store
-print(f'Data Stored {df.shape[0]} rows\n')
+## stores data to df
+df =  pd.concat(boliga_recent.store.values(), ignore_index=True)
+print(f'Data storesd {df.shape[0]} rows\n')
 
 
 # multipe pages per call
@@ -67,7 +67,7 @@ page_size = 200
 
 print(f'[+] Start {workers} threads for {page_size} pagesize per call: start at page {start_page} and at page {end_page} \n')
 boliga_recent.get_pages(start_page=start_page,end_page=end_page, pagesize=page_size, workers=workers, verbose=True)
-dt = boliga_recent.store
+dt = boliga_recent.DataFrame
 print(f'\n{dt.shape[0]} rows found. Data types are?')
 print(dt.dtypes) # data types
 
@@ -85,9 +85,9 @@ print('[+] Start single thread calls: page 0-9\n')
 _ = {boliga_sold.get_page(page=page, pagesize=100, verbose=True)
      for page in range(0, 10)}
 
-## store data to df
-df = boliga_sold.store
-print(f'Data Stored {df.shape[0]} sold estates\n')
+## stores data to df
+df =  pd.concat(boliga_sold.store.values(), ignore_index=True)
+print(f'Data storesd {df.shape[0]} sold estates\n')
 
 
 # multipe pages per call
@@ -99,7 +99,7 @@ page_size = 200
 print(f'[+] Start {workers} threads for {page_size} pagesize per call: start at page {start_page} and at page {end_page} \n')
 boliga_sold.get_pages(start_page=start_page, end_page=end_page,
                         pagesize=page_size, workers=workers, verbose=True)
-dt = boliga_sold.store
+dt = boliga_sold.DataFrame
 print(f'\n{dt.shape[0]} estates found. Data types are?')
 print(dt.dtypes)  # data types
 
@@ -121,10 +121,11 @@ print('[+] Estate | Start single thread calls page 0-9\n')
 
 _ = {estate.get_page(page=page, pagesize=15, verbose=True) for page in range(0,10)}
 
-## store data to df
-df = estate.store
-print(f'Data Stored {df.shape[0]} rows from estate.dk\n')
-print(f'Data Stored {nybolig.store.shape[0]} rows from nybolig.dk\n')
+## stores data to df
+
+df = pd.concat(estate.store.values(), ignore_index=True)
+print(f'Data storesd {df.shape[0]} rows from estate.dk\n')
+print(f'Data storesd {pd.concat(nybolig.store.values(), ignore_index=True).shape[0]} rows from nybolig.dk\n')
 
 
 # multipe pages per call
@@ -135,16 +136,16 @@ page_size = 200
 
 print(f'[+] Estate | Start {workers} threads for {page_size} pagesize per call: start at page {start_page} and at page {end_page} \n')
 estate.get_pages(start_page=start_page,end_page=end_page, pagesize=page_size, workers=workers, verbose=True)
-dt = estate.store
+dt = estate.DataFrame
 print(dt.dtypes) # data types
-print(f'\nData Stored {dt.shape[0]} rows from estate.dk\n')
+print(f'\nData storesd {dt.shape[0]} rows from estate.dk\n')
 
 
 print(f'[+] Nybolig | Start {workers} threads for {page_size} pagesize per call: start at page {start_page} and at page {end_page} \n')
 nybolig.get_pages(start_page=start_page,end_page=end_page, pagesize=page_size, workers=workers, verbose=True)
-dt = nybolig.store
+dt = nybolig.DataFrame
 print(dt.dtypes) # data types
-print(f'\nData Stored {dt.shape[0]} rows from nybolig.dk\n')
+print(f'\nData storesd {dt.shape[0]} rows from nybolig.dk\n')
 
 
 

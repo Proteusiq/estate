@@ -2,6 +2,8 @@
 [Deprecated]: `pipelines.boligax` is deprecated. Use `pipelines.boliger.boliga`
 This script contains an example of self generating tasks from UI Variable
 input of multiple zipcodes
+
+Contains two major codes: thread and unnessary data copy: bug > pd.DataFrame is not thread safe, flow: pd.append used in loop 
 """
 
 from airflow import DAG
@@ -37,12 +39,18 @@ def get_bolig(postal, **kwargs):
     bolig = BoligaRecent(url='https://api.boliga.dk/api/v2/search/results')
 
     bolig.get_pages(postal=postal, verbose=True)
-    bolig.store.drop(columns=['images'], inplace=True)
-    bolig.store.columns = bolig.store.columns.str.lower() #postgres query roomSize will require "roomSize"
-    bolig.store.to_sql(TABLE_NAME, engine, if_exists='append')
+    if not bolig.store.empty:
+        # columns with dict causes issues. stringfy thme
+        columns = bolig.store.select_dtypes('object').columns
+        bolig.store[columns] = bolig.store[columns].astype(str)
+        bolig.store.columns = bolig.store.columns.str.lower() #postgres query roomSize will require "roomSize"
+        bolig.store.to_sql(TABLE_NAME, engine, if_exists='append')
 
-    print(f'There were {len(bolig.store)} estates found in {postal}')
-    engine.dispose()
+        print(f'There were {len(bolig.store)} estates found in {postal}')
+        engine.dispose()
+    else:
+        print(f'There were no estates found in {postal}')
+
 
 
 def process_notify(engine=None, **kwargs):

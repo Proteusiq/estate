@@ -8,11 +8,14 @@ Using Design Patterns
 '''
 
 from abc import ABC, abstractmethod
+from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
+import threading
 import numpy as np
 import pandas as pd
 from requests import Session
+
 
 
 
@@ -38,7 +41,8 @@ class Bolig(ABC):
         session.headers.update(headers)
         self.session = session
         self.meta_data = None
-        self.store =  pd.DataFrame()
+        self.store =  self.ThreadSafeDict()
+    
 
     
     def __repr__(self):
@@ -52,3 +56,19 @@ class Bolig(ABC):
     @abstractmethod
     def get_pages(self, *args, **kwargs):
         pass
+
+    # Thread Safe Default Dictionary
+    class ThreadSafeDict(defaultdict):
+
+        def __init__(self, *p_arg, **n_arg):
+            defaultdict.__init__(self, *p_arg, **n_arg)
+            self._lock = threading.Lock()
+
+        def __enter__(self):
+            self._lock().acquire()
+            return self
+
+        def __exit__(self, type, value, traceback):
+            self._lock.release()
+
+

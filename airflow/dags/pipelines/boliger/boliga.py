@@ -33,7 +33,7 @@ class Boliga(Bolig):
     _ = {boliga_recent.get_page(page=page, pagesize=15, verbose=True) for page in range(0,10)}
 
     ## store data to df
-    df = boliga.store
+    df = pd.concat(boliga.store.values(), ignore_index=True)
     print(f'Data Stored {df.shape[0]} rows\n')
 
 
@@ -41,7 +41,7 @@ class Boliga(Bolig):
     workers = 6
     print(f'[+] Start {workers} threads calls\n for boliga sold estates')
     boliga_sold.get_pages(start_page=6,end_page=10, pagesize=200, workers=6, verbose=True)
-    dt = boliga_sold.store
+    dt = boliga_sold.DataFrame
     print(dt.dtypes) # data types
     ```    
     '''    
@@ -52,6 +52,8 @@ class Boliga(Bolig):
             page:int page number. default value 0
             pagesize:int number of boligs in a page. default value 100
             verbose:bool print mining progress. default value False
+        
+        Returns: self.store: list of DataFrame
         '''
         
         params = {'page':page,
@@ -63,17 +65,20 @@ class Boliga(Bolig):
 
         if r.ok:
             data = r.json()
-            
-            self.store = self.store.append(
-                    pd.DataFrame(data.get('results')), ignore_index=True)
+       
+            self.store[page] = pd.DataFrame(data.get('results'))
             self.max_pages = data.get('totalPages')
+            
 
         else:
             self.store
+
             
         if verbose:
-            print(f'[+] Gathering data from page {page:}.{" ":>5}Found {len(self.store):>5} estates'
+            print(f'[+] Gathering data from page {page:}.{" ":>5}Found {len(self.store)*pagesize:>5} estates'
                  f'{" ":>3}Time {datetime.now().strftime("%d-%m-%Y %H:%M:%S")}')
+
+        
 
         return self
 
@@ -85,6 +90,8 @@ class Boliga(Bolig):
             end_page:int page number to stop. default value None
             pagesize:int number of boligs per page. default valeu 100
             verbose:bool print mining progress. default value False
+
+        Returns: self.DataFrame
         '''
         
         # Make the first call to get total number of pages for split call pagesize split
@@ -106,6 +113,11 @@ class Boliga(Bolig):
         
             with ThreadPoolExecutor(max_workers=min(32,workers)) as executor:
                 _ = {executor.submit(func,split) for split in pages_split}
+      
+        if len(self.store):
+            self.DataFrame = pd.concat(self.store.values(), ignore_index=True)
+        else:
+            self.DataFrame = pd.DataFrame([])
         
         return self
 
