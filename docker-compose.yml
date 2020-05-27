@@ -3,6 +3,7 @@ services:
     redis:
         image: 'redis:5.0.5'
         # command: redis-server --requirepass redispass
+        restart: always
 
     postgres:
         build:
