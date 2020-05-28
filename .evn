@@ -1,3 +1,4 @@
+#This is a demo .env. It should never be checked to git
 POSTGRES_USER=danpra
 POSTGRES_PASSWORD=postgrespwd
 PGADMIN_DEFAULT_EMAIL=danpra@example.com
