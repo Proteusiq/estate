@@ -13,9 +13,10 @@ services:
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
             - POSTGRES_DB=airflow
         # Uncomment these lines to persist data on the local filesystem.
-            - PGDATA= data/postgres
+            - PGDATA=/var/lib/postgresql/data
         volumes:
-            - ./postgres/data:/var/lib/postgresql/data
+            - pgdata:/var/lib/postgresql/data
+
         
         restart: always
 
@@ -115,3 +116,7 @@ services:
             - POSTGRES_DB=airflow
             # - REDIS_PASSWORD=redispass
         command: worker
+
+volumes:
+    pgdata:
+        external: true
