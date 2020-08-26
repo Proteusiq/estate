@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.2'
 services:
     redis:
         image: 'redis:5.0.5'
@@ -64,19 +64,15 @@ services:
             interval: 30s
             timeout: 30s
             retries: 3
+        links:
+            - fluentd
 
-    flower:
-        build:
-            context: ./services/airflow
-        restart: always
-        depends_on:
-            - redis
-        environment:
-            - EXECUTOR=Celery
-            # - REDIS_PASSWORD=redispass
-        ports:
-            - "5555:5555"
-        command: flower
+        logging:
+            driver: "fluentd"
+            options:
+                fluentd-address: localhost:24224
+                tag: airflow.access
+
 
     scheduler:
         build:
@@ -117,7 +113,65 @@ services:
             # - REDIS_PASSWORD=redispass
         command: worker
 
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:$EFK_VERSION
+        environment:
+        - bootstrap.memory_lock=true
+        - discovery.type=single-node
+        - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
+        - xpack.security.enabled=$ELASTIC_SECURITY
+        restart: always
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        volumes:
+            - ./services/efk/elasticsearch:/usr/share/elasticsearch/data
+
+        ports:
+            - 9200:9200
+        networks:
+            - internal_net
+
+    kibana:
+        image: docker.elastic.co/kibana/kibana:$EFK_VERSION
+        environment:
+            - ELASTICSEARCH_USERNAME=$ELASTIC_USER
+            - ELASTICSEARCH_PASSWORD=$ELASTIC_PASSWORD
+        ports:
+            - 5601:5601
+        networks:
+            - internal_net
+        links:
+            - elasticsearch
+        depends_on:
+            - elasticsearch
+            - fluentd
+        restart: always
+
+    fluentd:
+        build: ./services/efk/fluentd
+        container_name: fluentd
+        volumes:
+            - ./services/efk/fluentd/conf:/fluentd/etc
+        depends_on:
+            - elasticsearch
+        restart: always
+        ports:
+            - "24224:24224"
+            - "24224:24224/udp"
+        networks:
+            - internal_net
 
 volumes:
     pgdata:
         external: true
+    elasticsearch:
+
+networks:
+  internal_net:
+    driver: bridge
+
+
+
+
