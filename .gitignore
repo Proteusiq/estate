@@ -114,4 +114,4 @@ Run
 
 #EFK
 services/efk/elasticsearch/*
-.services/efk/elasticsearch/*
+

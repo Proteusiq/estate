@@ -36,6 +36,9 @@ services:
             PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@example.com}
             PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
         restart: unless-stopped
+        networks:
+            - outside_net
+
 
     webserver:
         build:

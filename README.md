@@ -104,6 +104,9 @@ Estate(Services)        # initiate with estate recent home as url
 - [ ] Add an introduction to Airflow  README
 - [ ] Add custom error handling class
 - [ ] Add tests Airflow dags and Scrapers
+- [ ] Add a script to generate .evn and generate proper setting in airflow.cfg and fluent.conf
+- [ ] Create alerting system using Kibana
+- [ ] Create price modeling example
 
 ![dev](images/dev.png)
 
