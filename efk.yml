@@ -4,6 +4,9 @@ services:
         image: 'redis:5.0.5'
         # command: redis-server --requirepass redispass
         restart: always
+        networks:
+            - outside_net
+
 
     postgres:
         build:
@@ -19,6 +22,9 @@ services:
 
         
         restart: always
+        networks:
+            - outside_net
+
 
     pgadmin:
         image: dpage/pgadmin4
@@ -53,7 +59,7 @@ services:
             - POSTGRES_DB=airflow
             # - REDIS_PASSWORD=redispass
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./services/airflow/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # - ./airflow/plugins:/usr/local/airflow/plugins
         ports:
@@ -66,12 +72,15 @@ services:
             retries: 3
         links:
             - fluentd
+        networks:
+            - internal_net
+            - outside_net
 
         logging:
             driver: "fluentd"
             options:
                 fluentd-address: localhost:24224
-                tag: airflow.access
+                tag: airflow
 
 
     scheduler:
@@ -81,7 +90,7 @@ services:
         depends_on:
             - webserver
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./services/airflow/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # - ./airflow/plugins:/usr/local/airflow/plugins
         environment:
@@ -94,6 +103,11 @@ services:
             # - REDIS_PASSWORD=redispass
         command: scheduler
 
+        networks:
+            - internal_net
+            - outside_net
+
+
     worker:
         build:
             context: ./services/airflow
@@ -101,7 +115,7 @@ services:
         depends_on:
             - scheduler
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./services/airflow/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # - ./airflow/plugins:/usr/local/airflow/plugins
         environment:
@@ -112,6 +126,9 @@ services:
             - POSTGRES_DB=airflow
             # - REDIS_PASSWORD=redispass
         command: worker
+        networks:
+            - internal_net
+            - outside_net
 
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:$EFK_VERSION
@@ -170,6 +187,8 @@ volumes:
 
 networks:
   internal_net:
+    driver: bridge
+  outside_net:
     driver: bridge
 
 
