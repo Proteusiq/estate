@@ -80,7 +80,7 @@ services:
             driver: "fluentd"
             options:
                 fluentd-address: localhost:24224
-                tag: airflow
+                tag: airflow.web
 
 
     scheduler:
@@ -130,20 +130,30 @@ services:
             - internal_net
             - outside_net
 
+        logging:
+            driver: "fluentd"
+            options:
+                fluentd-address: localhost:24224
+                tag: airflow.worker
+
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:$EFK_VERSION
         environment:
         - bootstrap.memory_lock=true
         - discovery.type=single-node
+        - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
         - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
         - xpack.security.enabled=$ELASTIC_SECURITY
+        - xpack.license.self_generated.type=basic
+        - xpack.monitoring.collection.enabled=true
+
         restart: always
         ulimits:
             memlock:
                 soft: -1
                 hard: -1
         volumes:
-            - ./services/efk/elasticsearch:/usr/share/elasticsearch/data
+            - elasticsearch:/usr/share/elasticsearch/data
 
         ports:
             - 9200:9200
