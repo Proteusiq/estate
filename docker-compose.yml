@@ -1,9 +1,22 @@
 version: '2.1'
 services:
     redis:
-        image: 'redis:5.0.5'
-        # command: redis-server --requirepass redispass
+        image: 'bitnami/redis:6.0.6'
+        command: redis-server --requirepass ${REDIS_PASSWORD:-changeme}
         restart: always
+        environment:
+            #- ALLOW_EMPTY_PASSWORD=yes
+            - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
+        volumes:
+            - ./services/redis/redis-persistence:/bitnami/redis/data
+
+    redisinsight:
+      image: redislabs/redisinsight
+      ports:
+          - 8001:8001
+      depends_on:
+          - redis
+
 
     postgres:
         build:
@@ -51,9 +64,9 @@ services:
             - POSTGRES_USER=${POSTGRES_USER:-postgres}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
             - POSTGRES_DB=airflow
-            # - REDIS_PASSWORD=redispass
+            - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./services/airflow/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # - ./airflow/plugins:/usr/local/airflow/plugins
         ports:
@@ -65,19 +78,6 @@ services:
             timeout: 30s
             retries: 3
 
-    flower:
-        build:
-            context: ./services/airflow
-        restart: always
-        depends_on:
-            - redis
-        environment:
-            - EXECUTOR=Celery
-            # - REDIS_PASSWORD=redispass
-        ports:
-            - "5555:5555"
-        command: flower
-
     scheduler:
         build:
             context: ./services/airflow
@@ -85,7 +85,7 @@ services:
         depends_on:
             - webserver
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./services/airflow/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # - ./airflow/plugins:/usr/local/airflow/plugins
         environment:
@@ -95,7 +95,7 @@ services:
             - POSTGRES_USER=${POSTGRES_USER:-postgres}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
             - POSTGRES_DB=airflow
-            # - REDIS_PASSWORD=redispass
+            - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
         command: scheduler
 
     worker:
@@ -105,7 +105,7 @@ services:
         depends_on:
             - scheduler
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./services/airflow/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # - ./airflow/plugins:/usr/local/airflow/plugins
         environment:
@@ -114,7 +114,7 @@ services:
             - POSTGRES_USER=${POSTGRES_USER:-postgres}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
             - POSTGRES_DB=airflow
-            # - REDIS_PASSWORD=redispass
+            - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
         command: worker
 
 

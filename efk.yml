@@ -1,11 +1,27 @@
 version: '3.2'
 services:
     redis:
-        image: 'redis:5.0.5'
-        # command: redis-server --requirepass redispass
+        image: 'bitnami/redis:6.0.6'
+        command: redis-server --requirepass ${REDIS_PASSWORD:-changeme}
         restart: always
+        environment:
+            #- ALLOW_EMPTY_PASSWORD=yes
+            - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
+        volumes:
+            - ./services/redis/redis-persistence:/bitnami/redis/data
         networks:
             - outside_net
+
+
+    redisinsight:
+      image: redislabs/redisinsight
+      ports:
+          - 8001:8001
+      depends_on:
+          - redis
+       
+      networks:
+          - outside_net
 
 
     postgres:
@@ -60,7 +76,7 @@ services:
             - POSTGRES_USER=${POSTGRES_USER:-postgres}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
             - POSTGRES_DB=airflow
-            # - REDIS_PASSWORD=redispass
+            - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
         volumes:
             - ./services/airflow/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
@@ -83,7 +99,7 @@ services:
             driver: "fluentd"
             options:
                 fluentd-address: localhost:24224
-                tag: airflow.web
+                tag: airflow
 
 
     scheduler:
@@ -103,7 +119,7 @@ services:
             - POSTGRES_USER=${POSTGRES_USER:-postgres}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
             - POSTGRES_DB=airflow
-            # - REDIS_PASSWORD=redispass
+            - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
         command: scheduler
 
         networks:
@@ -127,7 +143,7 @@ services:
             - POSTGRES_USER=${POSTGRES_USER:-postgres}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
             - POSTGRES_DB=airflow
-            # - REDIS_PASSWORD=redispass
+            - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
         command: worker
         networks:
             - internal_net
@@ -137,7 +153,7 @@ services:
             driver: "fluentd"
             options:
                 fluentd-address: localhost:24224
-                tag: airflow.worker
+                tag: airflow2
 
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:$EFK_VERSION
