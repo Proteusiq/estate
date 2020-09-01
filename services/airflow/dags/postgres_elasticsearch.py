@@ -1,17 +1,22 @@
 
 from collections import defaultdict
 import json
+import logging
+import sys
 from airflow import DAG
 from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
+from airflow.sensors.sql_sensor import SqlSensor
 from airflow.utils.dates import datetime
 import pandas as pd
-import requests
 import sqlalchemy
 
 
 CONNECTION_URI = BaseHook.get_connection('bolig_db').get_uri()
 TABLE_NAME = 'postal_codes'
+
+# fluentd + kibana
+logging.basicConfig(stream=sys.stdout,level=logging.INFO,format="%(message)s")
 
 
 args = {
@@ -19,6 +24,8 @@ args = {
     'catchup_by_default': False,
 }
 
+
+# Re.write this using sqlsensor
 
 def poke_query_postgres(query:str, **kwargs) -> pd.DataFrame:
     """Poke Database to see if the data query will succeed
@@ -44,15 +51,22 @@ def poke_query_postgres(query:str, **kwargs) -> pd.DataFrame:
         df = pd.read_sql(query, engine)
         ok = True
 
-    except sqlalchemy.exc.ProgrammingError as e:
+        logging.info(json.dumps({'query':query,'poke': ok}))
+
+    except Exception as e:
         print(e.__dict__['statement'])
+        logging.error(f'Ops no results match {query!r}', exc_info=True)
+        logging.info(json.dumps({'query':query,'poke': ok}))
+        return ok
     
     finally:
         engine.dispose()
 
+    
+
     return ok
 
-def postgres_elasticsearch(query:str, **kwargs) -> None:
+def postgres_kibana(query:str, **kwargs) -> None:
     """Get Database to see if the data query will succeed
 
     Keyword Arguments:
@@ -70,42 +84,27 @@ def postgres_elasticsearch(query:str, **kwargs) -> None:
     
     try:
         df = pd.read_sql(query, engine)
-
+        logging.info(df.to_json(orient='records', lines=True))
         
-        df['_id'] = df['guid']
 
-        json_data = ''
-        for json_document in df.to_json(orient='records', lines=True).split('\n'):
-            json_dict = json.loads(json_document)
-            metadata = json.dumps({'index': {'_id': json_dict['_id']}})
-            json_dict.pop('_id')
-            json_data += metadata + '\n' + json.dumps(json_dict) + '\n'
-
-        headers = {'Content-type': 'application/json', 
-                   'Accept': 'text/plain'}
-        URI = 'http://elasticsearch:9200/estates/prices/_bulk'
-        with requests.Session() as httpx:
-            r = httpx.post(URI, data=json_data, headers=headers, timeout=60)
-        
-        print(f'Post Status {r.status_code} and reasons: {r.reason}')         
-
-       
-
-    except sqlalchemy.exc.ProgrammingError as e:
+    except Exception as e:
         print(e.__dict__['statement'])
-    
+        logging.error(f'Ops postgress no results match {query!r}', exc_info=True)
+        return f'Failed to send {query} query results to Kibana'
     finally:
         engine.dispose()
 
+    return f'{query} query results was sent to Kibana'
 
-    return f'postal data pushed to {TABLE_NAME}'
+
+    
 
 
 
 
 with DAG(
-    dag_id='send_data_to_elastic',
-    description='Send Data to Elasticsearch',
+    dag_id='send_data_to_kibana',
+    description='Send Data to Kibana',
     default_args=args,
     # Start 10 minutes ago # days_ago(2)
     start_date=datetime.now(),
@@ -121,15 +120,15 @@ with DAG(
 
     )
 
-    send_data_elasticsearch = PythonOperator(
+    send_data_kibana = PythonOperator(
         task_id='postgres_to_elasticsearch',
         op_args=['SELECT * FROM boliga',],
         dag=dag,
-        python_callable=postgres_elasticsearch,
+        python_callable=postgres_kibana,
         provide_context=True
     )
 
 
-poke_database >> send_data_elasticsearch
+poke_database >> send_data_kibana
 
 
