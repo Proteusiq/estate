@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -16,21 +15,21 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-
+"""Default configuration for the Airflow webserver"""
 import os
-from airflow import configuration as conf
+
 from flask_appbuilder.security.manager import AUTH_DB
+
 # from flask_appbuilder.security.manager import AUTH_LDAP
 # from flask_appbuilder.security.manager import AUTH_OAUTH
 # from flask_appbuilder.security.manager import AUTH_OID
 # from flask_appbuilder.security.manager import AUTH_REMOTE_USER
+
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# The SQLAlchemy connection string.
-SQLALCHEMY_DATABASE_URI = conf.get('core', 'SQL_ALCHEMY_CONN')
-
 # Flask-WTF flag for CSRF
-CSRF_ENABLED = True
+WTF_CSRF_ENABLED = True
 
 # ----------------------------------------------------
 # AUTHENTICATION CONFIG
@@ -62,20 +61,19 @@ AUTH_TYPE = AUTH_DB
 # When using OAuth Auth, uncomment to setup provider(s) info
 # Google OAuth example:
 # OAUTH_PROVIDERS = [{
-# 	'name':'google',
-#     'whitelist': ['@YOU_COMPANY_DOMAIN'],  # optional
+#   'name':'google',
 #     'token_key':'access_token',
 #     'icon':'fa-google',
 #         'remote_app': {
-#             'base_url':'https://www.googleapis.com/oauth2/v2/',
-#             'request_token_params':{
+#             'api_base_url':'https://www.googleapis.com/oauth2/v2/',
+#             'client_kwargs':{
 #                 'scope': 'email profile'
 #             },
 #             'access_token_url':'https://accounts.google.com/o/oauth2/token',
 #             'authorize_url':'https://accounts.google.com/o/oauth2/auth',
 #             'request_token_url': None,
-#             'consumer_key': CONSUMER_KEY,
-#             'consumer_secret': SECRET_KEY,
+#             'client_id': GOOGLE_KEY,
+#             'client_secret': GOOGLE_SECRET_KEY,
 #         }
 # }]
 
@@ -89,3 +87,31 @@ AUTH_TYPE = AUTH_DB
 #    { 'name': 'AOL', 'url': 'http://openid.aol.com/<username>' },
 #    { 'name': 'Flickr', 'url': 'http://www.flickr.com/<username>' },
 #    { 'name': 'MyOpenID', 'url': 'https://www.myopenid.com' }]
+
+# ----------------------------------------------------
+# Theme CONFIG
+# ----------------------------------------------------
+# Flask App Builder comes up with a number of predefined themes
+# that you can use for Apache Airflow.
+# http://flask-appbuilder.readthedocs.io/en/latest/customizing.html#changing-themes
+# Please make sure to remove "navbar_color" configuration from airflow.cfg
+# in order to fully utilize the theme. (or use that property in conjunction with theme)
+# APP_THEME = "bootstrap-theme.css"  # default bootstrap
+# APP_THEME = "amelia.css"
+# APP_THEME = "cerulean.css"
+# APP_THEME = "cosmo.css"
+# APP_THEME = "cyborg.css"
+# APP_THEME = "darkly.css"
+# APP_THEME = "flatly.css"
+# APP_THEME = "journal.css"
+# APP_THEME = "lumen.css"
+# APP_THEME = "paper.css"
+# APP_THEME = "readable.css"
+# APP_THEME = "sandstone.css"
+# APP_THEME = "simplex.css"
+# APP_THEME = "slate.css"
+# APP_THEME = "solar.css"
+# APP_THEME = "spacelab.css"
+# APP_THEME = "superhero.css"
+# APP_THEME = "united.css"
+# APP_THEME = "yeti.css"

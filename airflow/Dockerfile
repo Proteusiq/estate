@@ -4,7 +4,7 @@
 # BUILD: docker build --rm -t puckel/docker-airflow .
 # SOURCE: https://github.com/puckel/docker-airflow
 
-FROM python:3.7-slim-buster
+FROM python:3.8-slim-buster
 LABEL maintainer="Prayson W. Daniel"
 
 # Never prompt the user for choices on installation/configuration of packages
@@ -12,11 +12,17 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 
 # Airflow
-ARG AIRFLOW_VERSION=1.10.9
+ARG AIRFLOW_VERSION=2.0.0
 ARG AIRFLOW_USER_HOME=/usr/local/airflow
 ARG AIRFLOW_DEPS=""
 ARG PYTHON_DEPS=""
 ENV AIRFLOW_HOME=${AIRFLOW_USER_HOME}
+
+# Postgres
+ARG POSTGRES_USER=danpra
+ARG POSTGRES_PASSWORD=postgrespwd
+ENV POSTGRES_USER=${POSTGRES_USER}
+ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
 # Define en_US.
 ENV LANGUAGE en_US.UTF-8
@@ -61,7 +67,7 @@ RUN set -ex \
     && pip install pyasn1 \
     && pip install psycopg2 \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
-    && pip install 'redis==3.2' \
+    && pip install 'redis' \
     && pip uninstall -y SQLAlchemy\
     && pip install 'SQLAlchemy==1.3.15'\
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \

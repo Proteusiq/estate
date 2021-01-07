@@ -110,3 +110,4 @@ venv.bak/
 # celery
 source/celerybeat*
 Run
+services/efk/elasticsearch/*

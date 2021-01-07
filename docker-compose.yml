@@ -1,7 +1,7 @@
-version: '2.1'
+version: "2.1"
 services:
     redis:
-        image: 'redis:5.0.5'
+        image: redis
         # command: redis-server --requirepass redispass
         restart: always
 
@@ -12,11 +12,11 @@ services:
             - POSTGRES_USER=${POSTGRES_USER:-postgres}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
             - POSTGRES_DB=airflow
-        # Uncomment these lines to persist data on the local filesystem.
+            # Uncomment these lines to persist data on the local filesystem.
             - PGDATA= data/postgres
         volumes:
             - ./postgres/data:/var/lib/postgresql/data
-        
+
         restart: always
 
     pgadmin:
@@ -59,7 +59,8 @@ services:
             - "8080:8080"
         command: webserver
         healthcheck:
-            test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+            test:
+                ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
             interval: 30s
             timeout: 30s
             retries: 3
@@ -76,7 +77,6 @@ services:
         ports:
             - "5555:5555"
         command: flower
-
     scheduler:
         build:
             context: ./airflow
@@ -114,4 +114,4 @@ services:
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
             - POSTGRES_DB=airflow
             # - REDIS_PASSWORD=redispass
-        command: worker
+        command: celery worker
