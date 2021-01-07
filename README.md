@@ -20,19 +20,8 @@ cd advance_scraping
 
 ### Set Environment Variables
 
-Unix users can just edit `.env` contents.
+Set environment variables in `.env` contents. Edit, the `.env_demo` contents and save it as `.env`
 > **WARNING**: Remember to add your .env to .gitignore. Do not share your secrets
-
-Another way for both Unix and Windows. Change the contents of `environment_example` (Unix users) and `environment_example_windows.bat` (Windows users) 
-
-Unix users can do:
-
-```bash
-source environment_example
-```
-
-Windows users can just type `environment_example.windows.bat` on CMD.exe. This will set the variables and start the services in the background.
-Windows users can skip starting the serives. If you want to start the services manually, Comment Session 3 in `environment_example_windows.bat`
 
 ##### Check the environments to be set by docker-compose with:
 
@@ -40,9 +29,14 @@ Windows users can skip starting the serives. If you want to start the services m
 docker-compose config
 ```
 
+Make sure you can see the environment variable docker-compose fetches from `.env`
+
 See: [docker-compose](https://docs.docker.com/compose/reference/overview/) options.
 
 ### Start services with a single command:
+
+> **WARNING**: Postgres container has issue with persisting data after restart. Until then, we will use labled volume
+> Do `docker volume create --name=pgdata` to create a name volume (to delete `docker volume rm pgdata`)
 
 ```bash
 docker-compose up
@@ -50,7 +44,7 @@ docker-compose up
 
 Note: _Only the initial build_ will take awhile. Go grap a cup of coffee as docker downloads and install necessary tools. 
 You can run the services in detach mode. `--detach` or `-d` flag. This will leave services running.
-Windows users. Skip above, if you have started the services with batch script. You can see logs with `docker-compose logs -f`
+
 See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 
 ## UI Services:
