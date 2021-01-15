@@ -115,7 +115,7 @@ case "$1" in
     airflow db init
     echo "[+] Initialization of DataBase Completed"
     sleep 3
-    airflow connections add 'bolig_db' --conn-uri "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${BOLIG_DB}"
+    airflow connections add 'bolig_db' --conn-uri "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${BOLIG_DB}" >/dev/null
     echo "[+] Added $BOLIG_DB  connection uri"
     if [ "$AIRFLOW__CORE__EXECUTOR" = "LocalExecutor" ] || [ "$AIRFLOW__CORE__EXECUTOR" = "SequentialExecutor" ]; then
       # With the "Local" and "Sequential" executors it should all run in one container.

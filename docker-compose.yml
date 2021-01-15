@@ -4,6 +4,7 @@ services:
         image: redis
         # command: redis-server --requirepass redispass
         restart: always
+        container_name: redis
 
     postgres:
         build:
@@ -17,6 +18,7 @@ services:
         volumes:
             - pgdata:/var/lib/postgresql/data
         restart: always
+        container_name: postgres
 
     pgadmin:
         image: dpage/pgadmin4
@@ -28,6 +30,7 @@ services:
             PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@example.com}
             PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
         restart: unless-stopped
+        container_name: pgadmin
 
     webserver:
         build:
@@ -63,6 +66,7 @@ services:
             interval: 30s
             timeout: 30s
             retries: 3
+        container_name: airflow_server
 
     flower:
         build:
@@ -76,6 +80,7 @@ services:
         ports:
             - "5555:5555"
         command: flower
+
     scheduler:
         build:
             context: ./airflow
@@ -95,6 +100,7 @@ services:
             - POSTGRES_DB=airflow
             # - REDIS_PASSWORD=redispass
         command: scheduler
+        container_name: airflow_scheduler
 
     worker:
         build:
@@ -115,7 +121,7 @@ services:
             # - REDIS_PASSWORD=redispass
 
         command: celery worker
-
+        container_name: airflow_worker
 
 volumes:
     pgdata:
