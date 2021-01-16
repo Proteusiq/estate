@@ -4,11 +4,10 @@ Main example of using the design
 """
 
 from airflow import DAG
-from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
 from airflow.models import Variable
 from airflow.utils.dates import datetime
-from tenacity import retry, wait_exponential
+
 
 import sqlalchemy
 import pandas as pd
@@ -18,17 +17,13 @@ from pipelines.boliger import BoligaSold
 from pipelines.boliger import Estate
 from pipelines.boliger import Home
 from pipelines.boliger import Nybolig
+from tools.connections import fetch_connection_uri
 
 
 args = {
     "owner": "Prayson",
     "catchup_by_default": False,
 }
-
-
-@retry(wait=wait_exponential(multiplier=1, min=5, max=60))
-def fetch_connection_uri(uri_name):
-    return BaseHook.get_connection(uri_name).get_uri()
 
 
 CONNECTION_URI = fetch_connection_uri("bolig_db")
