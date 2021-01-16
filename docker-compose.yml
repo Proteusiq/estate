@@ -54,7 +54,7 @@ services:
 
     webserver:
         build:
-            context: ./containers/airflow
+            context: ./containers/airflow_service
         restart: always
         depends_on:
             - postgres
@@ -74,9 +74,9 @@ services:
             - POSTGRES_DB=airflow
             # - REDIS_PASSWORD=redispass
         volumes:
-            - ./containers/airflow/dags:/usr/local/airflow/dags
+            - ./containers/airflow_service/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
-            # - ./containers/airflow/plugins:/usr/local/airflow/plugins
+            # - ./containers/airflow_service/plugins:/usr/local/airflow/plugins
         ports:
             - "8080:8080"
         command: webserver
@@ -90,7 +90,7 @@ services:
 
     flower:
         build:
-            context: ./containers/airflow
+            context: ./containers/airflow_service
         restart: always
         depends_on:
             - redis
@@ -104,14 +104,14 @@ services:
 
     scheduler:
         build:
-            context: ./containers/airflow
+            context: ./containers/airflow_service
         restart: always
         depends_on:
             - webserver
         volumes:
-            - ./containers/airflow/dags:/usr/local/airflow/dags
+            - ./containers/airflow_service/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
-            # - ./containers/airflow/plugins:/usr/local/airflow/plugins
+            # - ./containers/airflow_service/plugins:/usr/local/airflow/plugins
         environment:
             - LOAD_EX=n
             - FERNET_KEY=${FERNET_KEY}
@@ -125,14 +125,14 @@ services:
 
     worker:
         build:
-            context: ./containers/airflow
+            context: ./containers/airflow_service
         restart: always
         depends_on:
             - scheduler
         volumes:
-            - ./containers/airflow/dags:/usr/local/airflow/dags
+            - ./containers/airflow_service/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
-            # - ./containers/airflow/plugins:/usr/local/airflow/plugins
+            # - ./containers/airflow_service/plugins:/usr/local/airflow/plugins
         environment:
             - FERNET_KEY=${FERNET_KEY}
             - EXECUTOR=Celery
