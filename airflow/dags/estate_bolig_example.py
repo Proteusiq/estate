@@ -57,7 +57,13 @@ def bolig_from_home(**kwargs):
     homes = Home(url="https://home.dk/umbraco/backoffice/home-api/Search")
 
     # multipe pages per call
-    params = dict(workers=5, start_page=10, end_page=25, pagesize=15, verbose=True,)
+    params = dict(
+        workers=5,
+        start_page=10,
+        end_page=25,
+        pagesize=15,
+        verbose=True,
+    )
 
     params.update({})  # update from ui
 
@@ -82,7 +88,13 @@ def bolig_from_estate(**kwargs):
     estate = Estate(url="https://www.estate.dk/Services/PropertySearch/Search")
 
     # multipe pages per call
-    params = dict(workers=5, start_page=10, end_page=25, pagesize=15, verbose=True,)
+    params = dict(
+        workers=5,
+        start_page=10,
+        end_page=25,
+        pagesize=15,
+        verbose=True,
+    )
 
     params.update({})  # update from ui
 
@@ -108,7 +120,13 @@ def bolig_from_nybolig(**kwargs):
     nybolig = Nybolig(url="https://www.nybolig.dk/Services/PropertySearch/Search")
 
     # multipe pages per call
-    params = dict(workers=5, start_page=10, end_page=25, pagesize=15, verbose=True,)
+    params = dict(
+        workers=5,
+        start_page=10,
+        end_page=25,
+        pagesize=15,
+        verbose=True,
+    )
 
     params.update({})  # update from ui
 
@@ -134,7 +152,13 @@ def bolig_from_boliga(**kwargs):
     boliga = BoligaSold(url="https://api.boliga.dk/api/v2/sold/search/results")
 
     # multipe pages per call
-    params = dict(workers=5, start_page=10, end_page=25, pagesize=500, verbose=True,)
+    params = dict(
+        workers=5,
+        start_page=10,
+        end_page=25,
+        pagesize=500,
+        verbose=True,
+    )
 
     params.update({})  # update from ui
 
