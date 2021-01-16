@@ -16,7 +16,7 @@ from pipelines.boligax import BoligaRecent
 from tools.connections import fetch_connection_uri
 
 
-CONNECTION_URI = fetch_connection_uri("bolig_db")
+CONNECTION_URI = next(fetch_connection_uri("bolig_db"))
 TABLE_NAME = f'recent_bolig_{Variable.get("postal",2650)}'
 
 args = {

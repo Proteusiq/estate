@@ -26,7 +26,7 @@ args = {
 }
 
 
-CONNECTION_URI = fetch_connection_uri("bolig_db")
+CONNECTION_URI = next(fetch_connection_uri("bolig_db"))
 
 
 def send_bolig(bolig, table, **kwargs):
