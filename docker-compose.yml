@@ -2,13 +2,20 @@ version: "2.1"
 services:
     redis:
         image: redis
-        # command: redis-server --requirepass redispass
         restart: always
         container_name: redis
 
+    redismod:
+        image: redislabs/redisinsight
+        ports:
+            - 8001:8001
+        depends_on:
+            - redis
+        container_name: redismod
+
     postgres:
         build:
-            context: ./postgres
+            context: ./containers/postgres
         environment:
             - POSTGRES_USER=${POSTGRES_USER:-postgres}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
@@ -32,9 +39,22 @@ services:
         restart: unless-stopped
         container_name: pgadmin
 
+    grafana:
+        image: grafana/grafana
+        ports:
+            - 3000:3000
+        links:
+            - postgres
+        env_file:
+            - ./containers/grafana/config.monitoring
+        volumes:
+            - ./containers/grafana/dashboard:/etc/extra-config/grafana
+        command: ./etc/extra-config/grafana/post.sh
+        container_name: grafana
+
     webserver:
         build:
-            context: ./airflow
+            context: ./containers/airflow
         restart: always
         depends_on:
             - postgres
@@ -54,9 +74,9 @@ services:
             - POSTGRES_DB=airflow
             # - REDIS_PASSWORD=redispass
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./containers/airflow/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
-            # - ./airflow/plugins:/usr/local/airflow/plugins
+            # - ./containers/airflow/plugins:/usr/local/airflow/plugins
         ports:
             - "8080:8080"
         command: webserver
@@ -70,7 +90,7 @@ services:
 
     flower:
         build:
-            context: ./airflow
+            context: ./containers/airflow
         restart: always
         depends_on:
             - redis
@@ -84,14 +104,14 @@ services:
 
     scheduler:
         build:
-            context: ./airflow
+            context: ./containers/airflow
         restart: always
         depends_on:
             - webserver
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./containers/airflow/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
-            # - ./airflow/plugins:/usr/local/airflow/plugins
+            # - ./containers/airflow/plugins:/usr/local/airflow/plugins
         environment:
             - LOAD_EX=n
             - FERNET_KEY=${FERNET_KEY}
@@ -105,14 +125,14 @@ services:
 
     worker:
         build:
-            context: ./airflow
+            context: ./containers/airflow
         restart: always
         depends_on:
             - scheduler
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./containers/airflow/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
-            # - ./airflow/plugins:/usr/local/airflow/plugins
+            # - ./containers/airflow/plugins:/usr/local/airflow/plugins
         environment:
             - FERNET_KEY=${FERNET_KEY}
             - EXECUTOR=Celery
