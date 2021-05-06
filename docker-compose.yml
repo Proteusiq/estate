@@ -1,23 +1,19 @@
 version: '2.1'
 services:
     redis:
-        image: 'redis:5.0.5'
+        image: redis:latest
         # command: redis-server --requirepass redispass
         restart: always
 
     postgres:
         build:
             context: ./services/postgres
-        environment:
-            - POSTGRES_USER=${POSTGRES_USER:-postgres}
-            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
-            - POSTGRES_DB=airflow
-        # Uncomment these lines to persist data on the local filesystem.
-            - PGDATA=/var/lib/postgresql/data
+        env_file: 
+            - ./services/postgres/postgres.env
+
         volumes:
             - pgdata:/var/lib/postgresql/data
 
-        
         restart: always
 
     pgadmin:
@@ -26,9 +22,8 @@ services:
             - postgres
         ports:
             - 5050:80
-        environment:
-            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@example.com}
-            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+        env_file: 
+            - ./services/pgadmin/pgadmin.env
         restart: unless-stopped
 
     webserver:
@@ -38,22 +33,11 @@ services:
         depends_on:
             - postgres
             - redis
-        environment:
-            - LOAD_EX=n
-            - FERNET_KEY=${FERNET_KEY}
-            - EXECUTOR=Celery
-            - AIRFLOW__WEBSERVER__RBAC=true
-            - AIRFLOW__WEBSERVER__WORKERS=2
-            - AIRFLOW__WEBSERVER__WORKER_REFRESH_INTERVAL=1800
-            - AIRFLOW__WEBSERVER__WEB_SERVER_WORKER_TIMEOUT=300
-            - ADMIN_USER=${ADMIN_USER:-danpra}
-            - ADMIN_PASSWORD=${ADMIN_PASSWORD:-changeme}
-            - POSTGRES_USER=${POSTGRES_USER:-postgres}
-            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
-            - POSTGRES_DB=airflow
-            # - REDIS_PASSWORD=redispass
+        env_file: 
+            - ./services/airflow/airflow.env
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./jobs/dags:/usr/local/airflow/dags
+            - ./jobs/logs/airflow:/opt/airflow/logs
             # Uncomment to include custom plugins
             # - ./airflow/plugins:/usr/local/airflow/plugins
         ports:
@@ -65,18 +49,19 @@ services:
             timeout: 30s
             retries: 3
 
-    flower:
-        build:
-            context: ./services/airflow
-        restart: always
-        depends_on:
-            - redis
-        environment:
-            - EXECUTOR=Celery
-            # - REDIS_PASSWORD=redispass
-        ports:
-            - "5555:5555"
-        command: flower
+    # flower:
+    #     build:
+    #         context: ./services/airflow
+    #     restart: always
+    #     depends_on:
+    #         - redis
+    #     environment:
+    #         - EXECUTOR=Celery
+    #         # - REDIS_PASSWORD=redispass
+    #     ports:
+    #         - "5555:5555"
+    #     command: flower
+    #     container_name: flower
 
     scheduler:
         build:
@@ -85,17 +70,11 @@ services:
         depends_on:
             - webserver
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./jobs/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # - ./airflow/plugins:/usr/local/airflow/plugins
-        environment:
-            - LOAD_EX=n
-            - FERNET_KEY=${FERNET_KEY}
-            - EXECUTOR=Celery
-            - POSTGRES_USER=${POSTGRES_USER:-postgres}
-            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
-            - POSTGRES_DB=airflow
-            # - REDIS_PASSWORD=redispass
+        env_file: 
+            - ./services/airflow/airflow.env
         command: scheduler
 
     worker:
@@ -105,16 +84,11 @@ services:
         depends_on:
             - scheduler
         volumes:
-            - ./airflow/dags:/usr/local/airflow/dags
+            - ./jobs/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
             # - ./airflow/plugins:/usr/local/airflow/plugins
-        environment:
-            - FERNET_KEY=${FERNET_KEY}
-            - EXECUTOR=Celery
-            - POSTGRES_USER=${POSTGRES_USER:-postgres}
-            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
-            - POSTGRES_DB=airflow
-            # - REDIS_PASSWORD=redispass
+        env_file: 
+            - ./services/airflow/airflow.env
         command: worker
 
 

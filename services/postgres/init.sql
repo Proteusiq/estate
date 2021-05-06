@@ -1,1 +1,3 @@
 CREATE DATABASE bolig_db;
+CREATE USER danpra  WITH PASSWORD 'postgrespwd';
+ALTER USER danpra WITH SUPERUSER;
