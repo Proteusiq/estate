@@ -4,11 +4,6 @@ services:
         image: redis:latest
         # command: redis-server --requirepass redispass
         restart: always
-        environment:
-            #- ALLOW_EMPTY_PASSWORD=yes
-            - REDIS_PASSWORD=${REDIS_PASSWORD:-changeme}
-        volumes:
-            - ./services/redis/redis-persistence:/bitnami/redis/data
 
     redisinsight:
       image: redislabs/redisinsight
