@@ -115,30 +115,30 @@ fi
 
 case "$1" in
     webserver)
-        
-        airflow connections --add --conn_id 'bolig_db' --conn_uri "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${BOLIG_DB}"
+        airflow connections add 'bolig_db' --conn-uri "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${BOLIG_DB}" >/dev/null
         echo "[+] Added $BOLIG_DB  connection uri"
         sleep 5
-        airflow initdb
+        airflow db init
         echo "[+] Initialization of DataBase Completed"
+        
         if [ "$AIRFLOW__CORE__EXECUTOR" = "LocalExecutor" ] || [ "$AIRFLOW__CORE__EXECUTOR" = "SequentialExecutor" ]; then
             # With the "Local" and "Sequential" executors it should all run in one container.
             airflow scheduler &
         fi
         
-        airflow create_user -r Admin -u $ADMIN_USER -e $ADMIN_EMAIL -f $ADMIN_FIRSTNAME -l $ADMIN_LASTNAME -p $ADMIN_PASSWORD
+        airflow users create -r Admin -u $ADMIN_USER -e $ADMIN_EMAIL -f $ADMIN_FIRSTNAME -l $ADMIN_LASTNAME -p $ADMIN_PASSWORD
         echo "[+] User: $ADMIN_USER  was given admin power"
         sleep 2
         
         exec airflow webserver
     ;;
-    worker|scheduler)
+    celery|scheduler)
         # Give the webserver time to run initdb.
         sleep 10
         
         exec airflow "$@"
     ;;
-    flower)
+    celery)
         sleep 10
         exec airflow "$@"
     ;;

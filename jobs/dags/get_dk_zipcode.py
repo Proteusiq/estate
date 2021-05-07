@@ -40,7 +40,7 @@ def get_postal(only_postal:bool=True, **kwargs) -> pd.DataFrame:
   
 
     post_data = defaultdict(list)
-    URI = 'http://dawa.aws.dk/postnumre'
+    URI = 'https://api.dataforsyningen.dk/postnumre'
 
     with requests.Session() as httpx:
         r = httpx.get(URI)

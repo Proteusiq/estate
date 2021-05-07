@@ -1,11 +1,13 @@
 version: '2.1'
 services:
     redis:
+        container_name: redis
         image: redis:latest
         # command: redis-server --requirepass redispass
         restart: always
 
     redisinsight:
+      container_name: redisUI
       image: redislabs/redisinsight
       ports:
           - 8001:8001
@@ -14,6 +16,7 @@ services:
 
 
     postgres:
+        container_name: postgres
         build:
             context: ./services/postgres
         env_file: 
@@ -25,6 +28,7 @@ services:
         restart: always
 
     pgadmin:
+        container_name: pgUI
         image: dpage/pgadmin4
         depends_on:
             - postgres
@@ -35,6 +39,7 @@ services:
         restart: unless-stopped
 
     webserver:
+        container_name: webserver
         build:
             context: ./services/airflow
         restart: always
@@ -57,21 +62,8 @@ services:
             timeout: 30s
             retries: 3
 
-    # flower:
-    #     build:
-    #         context: ./services/airflow
-    #     restart: always
-    #     depends_on:
-    #         - redis
-    #     environment:
-    #         - EXECUTOR=Celery
-    #         # - REDIS_PASSWORD=redispass
-    #     ports:
-    #         - "5555:5555"
-    #     command: flower
-    #     container_name: flower
-
     scheduler:
+        container_name: scheduler
         build:
             context: ./services/airflow
         restart: always
@@ -86,10 +78,12 @@ services:
         command: scheduler
 
     worker:
+        container_name: worker
         build:
             context: ./services/airflow
         restart: always
         depends_on:
+            - webserver
             - scheduler
         volumes:
             - ./jobs/dags:/usr/local/airflow/dags
@@ -97,7 +91,9 @@ services:
             # - ./airflow/plugins:/usr/local/airflow/plugins
         env_file: 
             - ./services/airflow/airflow.env
-        command: worker
+        command: celery worker
+        links: 
+            - webserver
 
 
 volumes:
