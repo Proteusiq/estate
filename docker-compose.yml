@@ -37,6 +37,17 @@ services:
         env_file: 
             - ./services/pgadmin/pgadmin.env
         restart: unless-stopped
+    
+    minio:
+        container_name: minio
+        image: minio/minio:latest
+        ports:
+            - 9000:9000
+        command: server /data
+        env_file: 
+            - ./services/minio/minio.env
+        volumes: 
+            - ./services/minio/data:/data
 
     webserver:
         container_name: webserver

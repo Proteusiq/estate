@@ -59,6 +59,9 @@ if [ "$AIRFLOW__CORE__EXECUTOR" != "SequentialExecutor" ]; then
         : "${ADMIN_EMAIL:="danpra@awesome.com"}"
         : "${ADMIN_FIRSTNAME:="prayson"}"
         : "${ADMIN_LASTNAME:="daniel"}"
+        : "${AWS_ACCESS_KEY_ID:="danpra"}"
+        : "${AWS_SECRET_ACCESS_KEY:="miniopwd"}"
+        : "${S3_ENDPOINT_URI:="minio:9000"}"
         
         AIRFLOW__CORE__SQL_ALCHEMY_CONN="postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}${POSTGRES_EXTRAS}"
         export AIRFLOW__CORE__SQL_ALCHEMY_CONN
@@ -117,6 +120,8 @@ case "$1" in
     webserver)
         airflow connections add 'bolig_db' --conn-uri "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${BOLIG_DB}" >/dev/null
         echo "[+] Added $BOLIG_DB  connection uri"
+        airflow connections add 'minio_s3' --conn-uri  "s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@${S3_ENDPOINT_URI}/data"
+        echo "[+] Added S3(minio_s3) connection uri"
         sleep 5
         airflow db init
         echo "[+] Initialization of DataBase Completed"

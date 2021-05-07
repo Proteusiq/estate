@@ -115,3 +115,6 @@ Run
 #EFK
 services/efk/elasticsearch/*
 
+# Minio
+services/minio/data
+
