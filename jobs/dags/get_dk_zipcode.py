@@ -4,28 +4,35 @@ This script contains an example of populating Danish zipcodes from dawa api
 
 
 from collections import defaultdict
-from airflow import DAG
+
+from airflow.decorators import dag, task
+from airflow.utils.dates import days_ago
 from airflow.hooks.base_hook import BaseHook
-from airflow.operators.python_operator import PythonOperator
-from airflow.utils.dates import datetime
+
 import pandas as pd
 import requests
 import sqlalchemy
 
 
-CONNECTION_URI = BaseHook.get_connection('bolig_db').get_uri()
-TABLE_NAME = 'postal_codes'
+CONNECTION_URI = BaseHook.get_connection("bolig_db").get_uri()
+TABLE_NAME = "postal_codes"
 
 
-args = {
-    'owner': 'Prayson',
-    'catchup_by_default': False,
+default_args = {
+    "owner": "Prayson",
+    "catchup_by_default": False,
 }
 
 
-def get_postal(only_postal:bool=True, **kwargs) -> pd.DataFrame:
+@dag(
+    default_args=default_args,
+    schedule_interval="@once",
+    start_date=days_ago(1),
+    tags=["postal_data"],
+)
+def get_postal(only_postal: bool = True, **kwargs) -> bool:
     """Populata Danish zipcodes
-    Simple function that returns DK postal codes for DAWA API. 
+    Simple function that returns DK postal codes for DAWA API.
 
     Keyword Arguments:
         only_postal {bool} -- return only zipcode without metadata (default: {True})
@@ -34,90 +41,76 @@ def get_postal(only_postal:bool=True, **kwargs) -> pd.DataFrame:
         pd.DataFrame -- DataFrame with all danish zipcodes
 
     Usage:
-         
+
         >>> zipcodes = get_postal(only_postal=False)
     """
-  
 
-    post_data = defaultdict(list)
-    URI = 'https://api.dataforsyningen.dk/postnumre'
+    @task(multiple_outputs=True)
+    def get_data(only_postal: bool = only_postal) -> str:
+        post_data = defaultdict(list)
+        URI = "https://api.dataforsyningen.dk/postnumre"
 
-    with requests.Session() as httpx:
-        r = httpx.get(URI)
+        with requests.Session() as httpx:
+            r = httpx.get(URI)
 
-    assert r.ok, 'Connection Error'
+        assert r.ok, "Connection Error"
 
-    posts = r.json()
+        posts = r.json()
 
-    for _, post in enumerate(posts):
-        post_data['Postal'].append(post['nr'])
-        post_data['Name'].append(post['navn'])
-        post_data['Kommuner'].append(
-            post['kommuner'][0]['navn'] if post['kommuner'] else None)
-        post_data['Longitude'].append(post['visueltcenter'][0])
-        post_data['Latitude'].append(post['visueltcenter'][1])
-        # post_data['bbox'].append(post['bbox'])
+        for _, post in enumerate(posts):
+            post_data["Postal"].append(post["nr"])
+            post_data["Name"].append(post["navn"])
+            post_data["Kommuner"].append(
+                post["kommuner"][0]["navn"] if post["kommuner"] else None
+            )
+            post_data["Longitude"].append(post["visueltcenter"][0])
+            post_data["Latitude"].append(post["visueltcenter"][1])
+            # post_data['bbox'].append(post['bbox'])
 
-    if only_postal:
-        df = pd.DataFrame(post_data)[['Postal']]
-    else:
-        df = pd.DataFrame(post_data)
+        if only_postal:
+            df = pd.DataFrame(post_data)[["Postal"]]
+        else:
+            df = pd.DataFrame(post_data)
 
-    df.columns = df.columns.str.lower()
-    df['postal'] = df['postal'].astype(int)
+        df.columns = df.columns.str.lower()
+        df["postal"] = df["postal"].astype(int)
 
-    engine = sqlalchemy.create_engine(CONNECTION_URI)
-    df.to_sql(TABLE_NAME, engine, if_exists='replace')
-    engine.dispose()
-
-    return f'postal data pushed to {TABLE_NAME}'
-
-def check_postal(**kwargs):
-    """check if the postal code database exists and populates
-    """
-
-    engine = sqlalchemy.create_engine(CONNECTION_URI)
-
-    print(f'checking if postal data is in {TABLE_NAME}')
-    
-    try:
-        df = pd.read_sql(f'SELECT * FROM {TABLE_NAME}', engine)
-
-        print(f'postal data with {df.shape} exits')
+        engine = sqlalchemy.create_engine(CONNECTION_URI)
+        df.to_sql(TABLE_NAME, engine, if_exists="replace")
         engine.dispose()
 
-    except sqlalchemy.exc.ProgrammingError as e:
-        print(e.__dict__['statement'])
-        return False
+        return {
+            "ncolums": df.shape[1],
+            "nrows": df.shape[0],
+            "db": CONNECTION_URI.split("/")[-1],
+            "table_name": TABLE_NAME,
+        }
 
-    return True 
+    @task
+    def check_data(get_result: dict) -> bool:
+        """check if the postal code database exists and populates"""
 
+        engine = sqlalchemy.create_engine(CONNECTION_URI)
+        table_name = get_result.get("table_name")
+        print(f"checking if postal data is in {table_name}")
 
+        try:
+            df = pd.read_sql(f"SELECT * FROM {table_name}", engine)
 
-with DAG(
-    dag_id='populate_postal_codes',
-    description=f'Populate postal code to {TABLE_NAME}',
-    default_args=args,
-    # Start 10 minutes ago # days_ago(2)
-    start_date=datetime.now(),
-    schedule_interval='@once',
-) as dag:
+            print(f"{table_name} data with {df.shape} exits")
+            engine.dispose()
 
-    push_postal_data = PythonOperator(
-        task_id='load_postal_data',
-        python_callable=get_postal,
-        op_args=[False,],
-        dag=dag,
-        provide_context=True
+        except sqlalchemy.exc.ProgrammingError as e:
+            print(e.__dict__["statement"])
+            return False
 
-    )
+        return True
 
-    check_postal_data = PythonOperator(
-        task_id='check_postal_data',
-        dag=dag,
-        python_callable=check_postal,
-        provide_context=True
-    )
+    # pipeline
+    postal_data = get_data(only_postal)
+    check_data(postal_data)
 
 
-push_postal_data >> check_postal_data
+load_postal_dag = get_postal(
+    only_postal=True,
+)

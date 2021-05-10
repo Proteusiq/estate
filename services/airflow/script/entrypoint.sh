@@ -118,9 +118,10 @@ fi
 
 case "$1" in
     webserver)
+        sleep 2
         airflow connections add 'bolig_db' --conn-uri "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${BOLIG_DB}" >/dev/null
         echo "[+] Added $BOLIG_DB  connection uri"
-        airflow connections add 'minio_s3' --conn-uri  "s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@${S3_ENDPOINT_URI}/data"
+        airflow connections add 'minio_s3' --conn-uri  "s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@${S3_ENDPOINT_URI}/data" >/dev/null
         echo "[+] Added S3(minio_s3) connection uri"
         sleep 5
         airflow db init
