@@ -51,10 +51,13 @@ See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 ![advance_image](images/airflow_dag.png)
 - ##### Airflow:  `address:` __localhost:8080__ `default_user:` __danpra__ `default_pwd`: __changeme__
 - ##### pgAdmin: `address:` __localhost:5050__ `default_email:` __pgadmin@example.com__ `default_pwd`: __admin__
-- ##### Flower: `address:` __localhost:5555__ 
+- ##### Flower: `address:` __localhost:5555__
+- ##### Ridis Insight: `address:` __localhost:8001__ 
+- ##### Grafana: `address:` __localhost:3000__  
 
 #### Airflow UI
 Head to `localhost:8080` on your browser. Login with credentials used in your environment ADMIN_USER and ADMIN_PASSWORD variables. Example: `danpra` and password `airflowpwd` 
+
 #### Postgres Admin Tool
 Head to `localhost:5050`. Login with credentials used in your environment PGADMIN_DEFAULT_EMAIL and PGADMIN_DEFAULT_PASSWORD variables. Example: `danpra@example.com` and password `postgrespwd`
 
@@ -63,6 +66,13 @@ Head to `localhost:5050`. Login with credentials used in your environment PGADMI
 Adding a connection to `postgres` DB in `pgAdmin`, click `Add New Server`. Type any name and select `Connection`. Name:Boliga > Host name/address: `postgres`: Postgres Username and Password and click `Save`
   
  ![postgres_image](images/pgAdmin_connection.png) 
+
+ #### Grafana
+ Head to `localhost:3000`. Login with user `admin` and and password `grafanapwd`. Change credentials in `containers/grafana/config.monitoring`. Add postgres as data source with the postgres username and password as we did in pgAdmin.
+
+![grafana_image](images/grafana_postgres.png) 
+> Charts coming soon
+
 
 
 ### Stop services with:
@@ -104,9 +114,7 @@ Estate(Services)        # initiate with estate recent home as url
 - [ ] Add an introduction to Airflow  README
 - [ ] Add custom error handling class
 - [ ] Add tests Airflow dags and Scrapers
-- [ ] Add a script to generate .evn and generate proper setting in airflow.cfg and fluent.conf
-- [ ] Create alerting system using Kibana
-- [ ] Create price modeling example
+- [ ] Add Grafana visualization of tasks and estates prices
 
 ![dev](images/dev.png)
 
