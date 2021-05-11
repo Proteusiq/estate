@@ -73,6 +73,10 @@ Adding a connection to `postgres` DB in `pgAdmin`, click `Add New Server`. Type 
 ![grafana_image](images/grafana_postgres.png) 
 > Charts coming soon
 
+# Airflow's Architecture:
+
+![airflow architecture](https://airflow.apache.org/docs/apache-airflow/stable/_images/graphviz-91fd3ca4f3dc01a69b3f84fbcd6b5c7975945ba4.png)
+> source: [Airflow Celery Executor](https://airflow.apache.org/docs/apache-airflow/stable/executor/celery.html)
 
 
 ### Stop services with:
