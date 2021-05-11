@@ -21,11 +21,10 @@ services:
             context: ./services/postgres
         env_file: 
             - ./services/postgres/postgres.env
-
         volumes:
             - pgdata:/var/lib/postgresql/data
-
         restart: always
+
 
     pgadmin:
         container_name: pgUI
@@ -63,7 +62,7 @@ services:
             - ./jobs/dags:/usr/local/airflow/dags
             - ./jobs/logs/airflow:/opt/airflow/logs
             # Uncomment to include custom plugins
-            # - ./airflow/plugins:/usr/local/airflow/plugins
+            # - ./services/airflow/plugins:/usr/local/airflow/plugins
         ports:
             - "8080:8080"
         command: webserver
@@ -83,7 +82,7 @@ services:
         volumes:
             - ./jobs/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
-            # - ./airflow/plugins:/usr/local/airflow/plugins
+            # - ./services/airflow/plugins:/usr/local/airflow/plugins
         env_file: 
             - ./services/airflow/airflow.env
         command: scheduler
@@ -99,12 +98,10 @@ services:
         volumes:
             - ./jobs/dags:/usr/local/airflow/dags
             # Uncomment to include custom plugins
-            # - ./airflow/plugins:/usr/local/airflow/plugins
+            # - ./services/airflow/plugins:/usr/local/airflow/plugins
         env_file: 
             - ./services/airflow/airflow.env
         command: celery worker
-        links: 
-            - webserver
 
 
 volumes:

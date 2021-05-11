@@ -118,14 +118,9 @@ fi
 
 case "$1" in
     webserver)
-        sleep 2
-        airflow connections add 'bolig_db' --conn-uri "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${BOLIG_DB}" >/dev/null
-        echo "[+] Added $BOLIG_DB  connection uri"
-        airflow connections add 'minio_s3' --conn-uri  "s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@${S3_ENDPOINT_URI}/data" >/dev/null
-        echo "[+] Added S3(minio_s3) connection uri"
-        sleep 5
         airflow db init
         echo "[+] Initialization of DataBase Completed"
+        sleep 5
         
         if [ "$AIRFLOW__CORE__EXECUTOR" = "LocalExecutor" ] || [ "$AIRFLOW__CORE__EXECUTOR" = "SequentialExecutor" ]; then
             # With the "Local" and "Sequential" executors it should all run in one container.
@@ -140,7 +135,8 @@ case "$1" in
     ;;
     celery|scheduler)
         # Give the webserver time to run initdb.
-        sleep 10
+        echo "Giving webserver time to initdb"
+        sleep 20
         
         exec airflow "$@"
     ;;
