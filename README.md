@@ -51,7 +51,8 @@ See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 ![advance_image](images/airflow_dag.png)
 - ##### Airflow:  `address:` __localhost:8080__ `default_user:` __danpra__ `default_pwd`: __changeme__
 - ##### pgAdmin: `address:` __localhost:5050__ `default_email:` __pgadmin@example.com__ `default_pwd`: __admin__
-- ##### Flower: `address:` __localhost:5555__
+- ##### minio: `address:` __localhost:9000__ `default_key:` __danpra__ `default_secret:` __miniopwd__
+## Extra [not part of defaults]
 - ##### Ridis Insight: `address:` __localhost:8001__ 
 - ##### Grafana: `address:` __localhost:3000__  
 
@@ -67,7 +68,9 @@ Adding a connection to `postgres` DB in `pgAdmin`, click `Add New Server`. Type 
   
  ![postgres_image](images/pgAdmin_connection.png) 
 
- #### Grafana
+ #### More Services
+ > Using efk.yml to add more services [not part of the default]
+ ### Grafana
  Head to `localhost:3000`. Login with user `admin` and and password `grafanapwd`. Change credentials in `containers/grafana/config.monitoring`. Add postgres as data source with the postgres username and password as we did in pgAdmin.
 
 ![grafana_image](images/grafana_postgres.png) 

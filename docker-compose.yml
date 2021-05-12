@@ -6,15 +6,6 @@ services:
         # command: redis-server --requirepass redispass
         restart: always
 
-    redisinsight:
-      container_name: redisUI
-      image: redislabs/redisinsight
-      ports:
-          - 8001:8001
-      depends_on:
-          - redis
-
-
     postgres:
         container_name: postgres
         build:
