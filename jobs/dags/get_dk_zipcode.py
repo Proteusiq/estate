@@ -46,7 +46,7 @@ def get_postal(only_postal: bool = True, **kwargs) -> bool:
     """
 
     @task(multiple_outputs=True)
-    def get_data(only_postal: bool = only_postal) -> str:
+    def get_data(only_postal: bool = only_postal) -> dict:
         post_data = defaultdict(list)
         URI = "https://api.dataforsyningen.dk/postnumre"
 

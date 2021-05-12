@@ -63,6 +63,7 @@ services:
             timeout: 30s
             retries: 3
 
+
     scheduler:
         container_name: scheduler
         build:
