@@ -21,7 +21,7 @@ cd advance_scraping
 ### Set Environment Variables
 
 Set environment variables in `.env` contents. Edit, the `.env_demo` contents and save it as `.env`
-> **WARNING**: Remember to add your .env to .gitignore. Do not share your secrets
+> ⚠️ **WARNING**: Remember to add your *.env to .gitignore. Do not share your secrets. All `*.env` are left here for demonstration.
 
 ##### Check the environments to be set by docker-compose with:
 
