@@ -67,6 +67,7 @@ RUN set -ex \
     && pip install pyasn1 \
     && pip install psycopg2 \
     && pip install tenacity \
+    && pip install httpx \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
     && pip install 'redis' \
     && pip install 'minio' \
