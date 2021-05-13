@@ -49,6 +49,7 @@ services:
             - redis
         env_file: 
             - ./services/airflow/airflow.env
+            - ./.env # Hidden Slack Token: not part of demo *.envs 
         volumes:
             - ./jobs/dags:/usr/local/airflow/dags
             - ./jobs/logs/airflow:/opt/airflow/logs
@@ -77,6 +78,7 @@ services:
             # - ./services/airflow/plugins:/usr/local/airflow/plugins
         env_file: 
             - ./services/airflow/airflow.env
+            - ./.env # Hidden Slack Token: not part of demo *.envs 
         command: scheduler
 
     worker:
@@ -93,6 +95,7 @@ services:
             # - ./services/airflow/plugins:/usr/local/airflow/plugins
         env_file: 
             - ./services/airflow/airflow.env
+            - ./.env # Hidden SLACK_TOKEN: not part of demo *.envs 
         command: celery worker
 
 
