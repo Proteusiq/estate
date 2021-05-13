@@ -51,6 +51,7 @@ Checklist to set slack integration
 </details>
 
 <br>
+
 ### Start services with a single command:
 
 > **WARNING**: Postgres container has an issue with persisting data after a restart. Until then, we will use labelled volume
