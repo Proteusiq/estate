@@ -20,8 +20,9 @@ cd advance_scraping
 
 ### Set Environment Variables
 
-Set environment variables in `.env` contents. Edit, the `.env_demo` contents and save it as `.env`
-> ⚠️ **WARNING**: Remember to add your *.env to .gitignore. Do not share your secrets. All `*.env` are left here for demonstration.
+Set correct environment variables in all `*.env`. E.g. edit the `.env_demo` contents and save it as `.env`<br>
+Each service has `service.env`. Edit them as you see fit.
+> ⚠️ **WARNING**: Remember to add  `*.env` to .gitignore. Do not share your secrets. All `*.env` are left here for demonstration.
 
 ##### Check the environments to be set by docker-compose with:
 
@@ -34,11 +35,11 @@ Make sure you can see the environment variable docker-compose fetches from `.env
 See: [docker-compose](https://docs.docker.com/compose/reference/overview/) options.
 
 <br>
-<details><summary>Slack Intergration</summary>
+<details><summary>Slack Integration</summary>
 <p>
 
 ### How to Step-up Slack
-Checklist to set slack intergration
+Checklist to set slack integration
 
  - [ ] Create [Slack APP](https://api.slack.com/apps/) for a given channel
  - [ ] In `OAuth Tokens for Your Workspace` get the Bot User OAuth Token and set it in .env SLACK_TOKEN
@@ -52,14 +53,14 @@ Checklist to set slack intergration
 <br>
 ### Start services with a single command:
 
-> **WARNING**: Postgres container has issue with persisting data after restart. Until then, we will use labled volume
-> Do `docker volume create --name=pgdata` to create a name volume (to delete `docker volume rm pgdata`)
+> **WARNING**: Postgres container has an issue with persisting data after a restart. Until then, we will use labelled volume
+> Do `docker volume create --name=pgdata` to create a named volume (to delete `docker volume rm pgdata`)
 
 ```bash
 docker-compose up
 ```
 
-Note: _Only the initial build_ will take awhile. Go grap a cup of coffee as docker downloads and install necessary tools. 
+Note: _Only the initial build_ will take a while. Go grab a cup of coffee as docker downloads and install the necessary tools. 
 You can run the services in detach mode. `--detach` or `-d` flag. This will leave services running.
 
 See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
@@ -88,7 +89,7 @@ Adding a connection to `postgres` DB in `pgAdmin`, click `Add New Server`. Type 
  #### More Services
  > Using efk.yml to add more services [not part of the default]
  ### Grafana
- Head to `localhost:3000`. Login with user `admin` and and password `grafanapwd`. Change credentials in `containers/grafana/config.monitoring`. Add postgres as data source with the postgres username and password as we did in pgAdmin.
+ Head to `localhost:3000`. Login with user `admin` and password `grafanapwd`. Change credentials in `containers/grafana/config.monitoring`. Add Postgres as a data source with the Postgres username and password as we did in pgAdmin.
 
 ![grafana_image](images/grafana_postgres.png) 
 > Charts coming soon
@@ -114,11 +115,11 @@ docker-compose down -v
 ```
 See: [docker-compose down](https://docs.docker.com/compose/reference/down/) options
 ### Web Scraping and Design Pattern [Opinionated Rumbling]
-A lazy programmer, like me, loves to write less yet comprehensive codes. (:) Yes, I said it). Design Pattern in Python is not as useful and in most cases, an overkill, as other languages like Java, C#, and C++. In order to design a simple bolig[_danish for estate_] scrapping tool from different estate websites in Denmark, I decided to use a bit of Singleton Pattern and Abstract Factory Pattern.
+A lazy programmer, like me, loves to write less yet comprehensive codes. (:) Yes, I said it). Design Pattern in Python is not as useful and, in most cases, an overkill as other languages like Java, C#, and C++. To design a simple bolig[_danish for estate_] scrapping tool from different estate websites in Denmark, I decided to use a bit of Singleton Pattern and Abstract Factory Pattern.
 
-Bolig (`pipelines.boliger.bolig.Bolig`) ensures that there exists a single instance and single object that can be used by all other bolig related classes. The form of singleton design is Early Instantiation. We create an instance at load time. 
+Bolig (`pipelines.boliger.bolig.Bolig`) ensures a single instance and single object that can be used by all other bolig related classes. The form of singleton design is Early Instantiation. We create an instance at load time. 
 
-Bolig class also defines an interface[abstract class] for creating families of related objects without specifying their concrete sub-classes[functions]. This ensures consistency among all objects by isolating the client code from implementation. We want to use the same function but with different implementations. `get_page` and `get_pages` will always be called in the same way but the implementation is different.
+Bolig class also defines an interface[abstract class] for creating families of related objects without specifying their concrete sub-classes[functions]. This ensures consistency among all objects by isolating the client code from implementation. We want to use the same function but with different implementations. `get_page` and `get_pages` will always be called in the same way, but the implementation is different.
 
 ```python
 # inheritance tree
@@ -142,7 +143,7 @@ Estate(Services)        # initiate with estate recent home as url
 
 ![dev](images/dev.png)
 
-#### Repos that made this project possible and lots of github issues:
+#### Repos that made this project possible and lots of Github issues:
 
  [Docker Apache Airflow](https://github.com/puckel/docker-airflow)
 
