@@ -1,9 +1,7 @@
-import os
-
 from airflow import DAG
 from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
-from airflow.utils.dates import days_ago, timedelta, datetime
+from airflow.utils.dates import timedelta, datetime
 
 from sqlalchemy import create_engine
 import pandas as pd
@@ -61,15 +59,16 @@ def remove_data(**kwargs):
         print(f"data removed {repr(data_size)} rows")
 
     connection.dispose()
-    return f"[+] data removing task completed"
+    return "[+] data removing task completed"
 
 
 with DAG(
     dag_id="df_to_postgres_sqlalchemy",
     description=f'Load data to postgress table {repr("boliga")}',
     default_args=args,
-    start_date=datetime.now()
-    - timedelta(minutes=10),  # Start 10 minutes ago # days_ago(2)
+    start_date=(
+        datetime.now() - timedelta(minutes=10)
+    ),  # Start 10 minutes ago # days_ago(2)
     schedule_interval="*/10 * * * *",
 ) as dag:
 

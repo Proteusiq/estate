@@ -66,7 +66,7 @@ def process_completed(engine: sqlalchemy.types.TypeEngine = None, **kwargs) -> N
     df = pd.read_sql(f"SELECT * FROM {TABLE_NAME}", engine)
     engine.dispose()
     print(f"Mining {TABLE_NAME} has {len(df)} rows at {datetime.now()}")
-    return f"Data sending completed"
+    return "Data sending completed"
 
 
 with DAG(

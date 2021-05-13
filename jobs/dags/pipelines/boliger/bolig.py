@@ -1,6 +1,6 @@
 """
 PyData Example: Advance Web Scraping
-        Build API for end-user One Class to Rule them all 
+        Build API for end-user One Class to Rule them all
         Note: Use for educational purposes only
 Using Design Patterns
         Singleton Design Pattern
@@ -9,11 +9,7 @@ Using Design Patterns
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
 import threading
-import numpy as np
-import pandas as pd
 from requests import Session
 
 

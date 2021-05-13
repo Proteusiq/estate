@@ -6,9 +6,7 @@
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor
 from requests import Session
-import numpy as np
 import pandas as pd
 
 

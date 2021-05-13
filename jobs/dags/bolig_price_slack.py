@@ -1,4 +1,3 @@
-from collections import defaultdict
 from datetime import datetime, timedelta
 from io import BytesIO
 from os import environ
@@ -113,7 +112,7 @@ def slack_price_notification(postal: Optional[int] = 2650, **kwargs):
 
     # my tasks
     response = get_houses(postal)
-    notify = price_notification(response)
+    notify = price_notification(response)  # noqa
 
 
 find_price_dag = slack_price_notification(postal=2650)

@@ -3,7 +3,8 @@
 This script contains an example of self generating tasks from UI Variable
 input of multiple zipcodes
 
-Contains two major codes: thread and unnessary data copy: bug > pd.DataFrame is not thread safe, flow: pd.append used in loop 
+Contains two major codes: thread and unnessary data copy: bug > pd.DataFrame
+is not thread safe, flow: pd.append used in loop
 """
 
 from airflow import DAG
@@ -58,7 +59,7 @@ def process_notify(engine=None, **kwargs):
     df = pd.read_sql(f"SELECT * FROM {TABLE_NAME}", engine)
     engine.dispose()
     print(f"Mining {TABLE_NAME} has {len(df)} rows at {datetime.now()}")
-    return f"Data sending completed"
+    return "Data sending completed"
 
 
 # if the Variable are not entered in UI Variable key:postals value: {"whatever": 2650,"bla":2400}

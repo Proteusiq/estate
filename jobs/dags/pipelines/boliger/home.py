@@ -62,7 +62,7 @@ class Home(Bolig):
             data = r.json()
 
             self.store[page] = pd.DataFrame(data.get("searchResults"))
-            self.max_pages = loops = np.ceil(
+            self.max_pages = np.ceil(
                 data["totalSearchResults"] / data["searchResultsPerPage"]
             ).astype(int)
 
@@ -104,9 +104,11 @@ class Home(Bolig):
         if start_page <= total_pages:
             start_page += 1
 
-            func = lambda pages: {
-                self.get_page(page, pagesize, verbose=verbose) for page in pages
-            }
+            def func(pages):
+                return {
+                    self.get_page(page, pagesize, verbose=verbose) for page in pages
+                }
+
             pages_split = np.array_split(
                 np.arange(start_page, total_pages + 1), workers
             )

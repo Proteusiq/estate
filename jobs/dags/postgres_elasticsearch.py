@@ -1,11 +1,9 @@
-from collections import defaultdict
 import json
 import logging
 import sys
 from airflow import DAG
 from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
-from airflow.sensors.sql_sensor import SqlSensor
 from airflow.utils.dates import datetime
 import pandas as pd
 import sqlalchemy
@@ -50,7 +48,7 @@ def poke_query_postgres(query: str, **kwargs) -> pd.DataFrame:
         df = pd.read_sql(query, engine)
         ok = True
 
-        logging.info(json.dumps({"query": query, "poke": ok}))
+        logging.info(json.dumps({"query": query, "poke": ok, "dataf_shape": df.shape}))
 
     except Exception as e:
         print(e.__dict__["statement"])

@@ -6,11 +6,9 @@ Main example of using the design
 from airflow import DAG
 from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
-from airflow.models import Variable
 from airflow.utils.dates import datetime
 
 import sqlalchemy
-import pandas as pd
 
 
 from pipelines.boliger import BoligaSold
@@ -172,7 +170,7 @@ def bolig_from_boliga(**kwargs):
 
 with DAG(
     dag_id="example_from_home_estate_nybolig_boliga",
-    description=f"Populate data from home.dk estate.dk and nybolig.dk",
+    description="Populate data from home.dk estate.dk and nybolig.dk",
     default_args=args,
     # Start 10 minutes ago # days_ago(2)
     start_date=datetime.now(),

@@ -22,7 +22,7 @@ homes = Home(url="https://home.dk/umbraco/backoffice/home-api/Search")
 print("[+] Start single thread calls: page 0-6\n")
 _ = {homes.get_page(page=page, pagesize=15, verbose=True) for page in range(0, 6)}
 
-## stores data to df
+# stores data to df
 df = pd.concat(homes.store.values(), ignore_index=True)
 print(f"Data gathed {df.shape[0]} rows\n")
 
@@ -63,7 +63,7 @@ _ = {
     for page in range(0, 10)
 }
 
-## stores data to df
+# stores data to df
 df = pd.concat(boliga_recent.store.values(), ignore_index=True)
 print(f"Data storesd {df.shape[0]} rows\n")
 
@@ -105,7 +105,7 @@ _ = {
     boliga_sold.get_page(page=page, pagesize=100, verbose=True) for page in range(0, 10)
 }
 
-## stores data to df
+# stores data to df
 df = pd.concat(boliga_sold.store.values(), ignore_index=True)
 print(f"Data storesd {df.shape[0]} sold estates\n")
 
@@ -148,7 +148,7 @@ print("[+] Estate | Start single thread calls page 0-9\n")
 
 _ = {estate.get_page(page=page, pagesize=15, verbose=True) for page in range(0, 10)}
 
-## stores data to df
+# stores data to df
 
 df = pd.concat(estate.store.values(), ignore_index=True)
 print(f"Data storesd {df.shape[0]} rows from estate.dk\n")

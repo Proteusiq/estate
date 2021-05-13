@@ -107,9 +107,11 @@ class Boliga(Bolig):
         if start_page <= total_pages:
             start_page += 1
 
-            func = lambda pages: {
-                self.get_page(page, pagesize, verbose=verbose) for page in pages
-            }
+            def func(pages):
+                return {
+                    self.get_page(page, pagesize, verbose=verbose) for page in pages
+                }
+
             pages_split = np.array_split(
                 np.arange(start_page, total_pages + 1), workers
             )
