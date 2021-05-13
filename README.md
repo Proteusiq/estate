@@ -33,18 +33,23 @@ Make sure you can see the environment variable docker-compose fetches from `.env
 
 See: [docker-compose](https://docs.docker.com/compose/reference/overview/) options.
 
+<br>
 <details><summary>Slack Intergration</summary>
 <p>
-#### How to Step-up Slack
+
+### How to Step-up Slack
+Checklist to set slack intergration
+
  - [ ] Create [Slack APP](https://api.slack.com/apps/) for a given channel
  - [ ] In `OAuth Tokens for Your Workspace` get the Bot User OAuth Token and set it in .env SLACK_TOKEN
  - [ ] Set `Bot Token Scopes` to `chat:write.customize`
  - [ ] Extra `Restrict API Token Usage` whitelist IP Address
- - [ ] In a given channel invite the bot e.g. @BotName
+ - [ ] In a given channel invite the bot e.g. `@BotName`
+
 </p>
 </details>
 
-
+<br>
 ### Start services with a single command:
 
 > **WARNING**: Postgres container has issue with persisting data after restart. Until then, we will use labled volume
