@@ -119,9 +119,10 @@ TABLE_NAME = 'recent_bolig'
 
 bolig = BoligaRecent(url='https://api.boliga.dk/api/v2/search/results')
 bolig.get_pages(postal='2600',verbose=True)
-
-engine = sqlalchemy.create_engine(CONNECTION_URI)
-bolig.to_sql(bolig.store, engine, if_exists='append')
-engine.dispose()
+try:
+    engine = sqlalchemy.create_engine(CONNECTION_URI)
+    bolig.to_sql(bolig.store, engine, if_exists='append')
+finally:
+    engine.dispose()
 
 """
