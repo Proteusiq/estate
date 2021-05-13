@@ -41,8 +41,8 @@ See: [docker-compose](https://docs.docker.com/compose/reference/overview/) optio
  - [ ] Set `Bot Token Scopes` to `chat:write.customize`
  - [ ] Extra `Restrict API Token Usage` whitelist IP Address
  - [ ] In a given channel invite the bot e.g. @BotName
-<p>
-<details>
+</p>
+</details>
 
 
 ### Start services with a single command:
