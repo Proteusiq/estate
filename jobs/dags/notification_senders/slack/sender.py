@@ -23,11 +23,11 @@ def notify(
     if isinstance(attachments, dict):
         attachments = [attachments]
 
-    return
-    SlackAPIPostOperator(
+    return SlackAPIPostOperator(
         task_id=task_id,
         username=username,
         channel=channel,
+        token=SLACK_TOKEN,
         text=f"{status_emoji} {text}",
         attachments=attachments,
     ).execute()

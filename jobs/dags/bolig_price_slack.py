@@ -103,15 +103,13 @@ def slack_price_notification(postal: Optional[int] = 2650, **kwargs):
     @task()
     def price_notification(get_result: dict) -> None:
 
-        slack_load = dict(
+        _ = notify(
             task_id="price_notification",
             username="airflow_bot",
             status=True,  # success
             text=f"There are house to check: {get_result}",
             channel="#houseprices",
         )
-
-        notify(**slack_load)
 
     # my tasks
     response = get_houses(postal)
