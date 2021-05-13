@@ -74,10 +74,11 @@ def get_postal(only_postal: bool = True, **kwargs) -> bool:
 
         df.columns = df.columns.str.lower()
         df["postal"] = df["postal"].astype(int)
-
-        engine = sqlalchemy.create_engine(CONNECTION_URI)
-        df.to_sql(TABLE_NAME, engine, if_exists="replace")
-        engine.dispose()
+        try:
+            engine = sqlalchemy.create_engine(CONNECTION_URI)
+            df.to_sql(TABLE_NAME, engine, if_exists="replace")
+        finally:
+            engine.dispose()
 
         return {
             "ncolums": df.shape[1],
@@ -98,13 +99,15 @@ def get_postal(only_postal: bool = True, **kwargs) -> bool:
             df = pd.read_sql(f"SELECT * FROM {table_name}", engine)
 
             print(f"{table_name} data with {df.shape} exits")
-            engine.dispose()
+            return_status = True
 
         except sqlalchemy.exc.ProgrammingError as e:
             print(e.__dict__["statement"])
-            return False
+            return_status = False
+        finally:
+            engine.dispose()
 
-        return True
+        return return_status
 
     # pipeline
     postal_data = get_data(only_postal)

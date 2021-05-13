@@ -31,15 +31,16 @@ def load_data(**kwargs):
             "timex": [datetime.now(), datetime.now(), datetime.now()],
         }
     )
-    df.to_sql(
-        TABLE_NAME,
-        connection,
-        if_exists="append",
-    )
+    try:
+        df.to_sql(
+            TABLE_NAME,
+            connection,
+            if_exists="append",
+        )
 
-    dt = pd.read_sql(f"SELECT * FROM {TABLE_NAME}", connection)
-
-    connection.dispose()
+        dt = pd.read_sql(f"SELECT * FROM {TABLE_NAME}", connection)
+    finally:
+        connection.dispose()
     print(f"data loaded {len(df)} rows, total rows {len(dt)}")
 
     return len(dt)
@@ -52,13 +53,14 @@ def remove_data(**kwargs):
     data_size = ti.xcom_pull(task_ids="load_data_with_sqlalchemy")
 
     print(f"current data: {data_size} rows")
-    if data_size and data_size > 50:
-        with connection.connect() as conn:
-            conn.execute(f"DELETE FROM {TABLE_NAME};")
+    try:
+        if data_size and data_size > 50:
+            with connection.connect() as conn:
+                conn.execute(f"DELETE FROM {TABLE_NAME};")
 
-        print(f"data removed {repr(data_size)} rows")
-
-    connection.dispose()
+            print(f"data removed {repr(data_size)} rows")
+    finally:
+        connection.dispose()
     return "[+] data removing task completed"
 
 

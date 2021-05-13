@@ -46,10 +46,11 @@ def get_bolig(
         # columns with dict causes issues. stringfy thme
         columns = bolig.store.select_dtypes("object").columns
         bolig.store[columns] = bolig.store[columns].astype(str)
-
-        engine = sqlalchemy.create_engine(CONNECTION_URI)
-        bolig.store.to_sql(TABLE_NAME, engine, if_exists="append")
-        engine.dispose()
+        try:
+            engine = sqlalchemy.create_engine(CONNECTION_URI)
+            bolig.store.to_sql(TABLE_NAME, engine, if_exists="append")
+        finally:
+            engine.dispose()
 
         print(f"There were {len(bolig.store)} estates found in {postal}")
     else:
@@ -62,9 +63,11 @@ def process_completed(engine: sqlalchemy.types.TypeEngine = None, **kwargs) -> N
     Keyword Arguments:
         engine {sqlalchemy.types.TypeEngine} -- Connection Engine to Database (default: {None})
     """
-    engine = sqlalchemy.create_engine(CONNECTION_URI)
-    df = pd.read_sql(f"SELECT * FROM {TABLE_NAME}", engine)
-    engine.dispose()
+    try:
+        engine = sqlalchemy.create_engine(CONNECTION_URI)
+        df = pd.read_sql(f"SELECT * FROM {TABLE_NAME}", engine)
+    finally:
+        engine.dispose()
     print(f"Mining {TABLE_NAME} has {len(df)} rows at {datetime.now()}")
     return "Data sending completed"
 

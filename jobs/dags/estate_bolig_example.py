@@ -37,10 +37,12 @@ def send_bolig(bolig, table, **kwargs):
     columns = bolig.select_dtypes("object").columns
     bolig[columns] = bolig[columns].astype(str)
 
-    engine = sqlalchemy.create_engine(CONNECTION_URI)
-    bolig.to_sql(table, engine, if_exists="append")
-    print(f"There were {len(bolig)} estates send to {table}")
-    engine.dispose()
+    try:
+        engine = sqlalchemy.create_engine(CONNECTION_URI)
+        bolig.to_sql(table, engine, if_exists="append")
+        print(f"There were {len(bolig)} estates send to {table}")
+    finally:
+        engine.dispose()
 
 
 def bolig_from_home(**kwargs):

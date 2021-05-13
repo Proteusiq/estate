@@ -46,18 +46,22 @@ def get_bolig(postal, **kwargs):
         bolig.store.columns = (
             bolig.store.columns.str.lower()
         )  # postgres query roomSize will require "roomSize"
-        bolig.store.to_sql(TABLE_NAME, engine, if_exists="append")
+        try:
+            bolig.store.to_sql(TABLE_NAME, engine, if_exists="append")
 
-        print(f"There were {len(bolig.store)} estates found in {postal}")
-        engine.dispose()
+            print(f"There were {len(bolig.store)} estates found in {postal}")
+        finally:
+            engine.dispose()
     else:
         print(f"There were no estates found in {postal}")
 
 
 def process_notify(engine=None, **kwargs):
-    engine = sqlalchemy.create_engine(CONNECTION_URI)
-    df = pd.read_sql(f"SELECT * FROM {TABLE_NAME}", engine)
-    engine.dispose()
+    try:
+        engine = sqlalchemy.create_engine(CONNECTION_URI)
+        df = pd.read_sql(f"SELECT * FROM {TABLE_NAME}", engine)
+    finally:
+        engine.dispose()
     print(f"Mining {TABLE_NAME} has {len(df)} rows at {datetime.now()}")
     return "Data sending completed"
 
