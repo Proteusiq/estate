@@ -3,11 +3,12 @@ from io import BytesIO
 from os import environ
 from typing import Optional
 from airflow.decorators import dag, task
-from airflow.providers.slack.operators.slack import SlackAPIPostOperator  # noqa
 
 from minio import Minio
 import pandas as pd
 import httpx
+
+from notification_senders.slack.sender import notify
 
 default_args = {
     "owner": "Prayson",
@@ -102,17 +103,19 @@ def slack_price_notification(postal: Optional[int] = 2650, **kwargs):
     @task()
     def price_notification(get_result: dict) -> None:
 
-        return SlackAPIPostOperator(
+        slack_load = dict(
             task_id="price_notification",
             username="airflow_bot",
-            token=environ.get("SLACK_TOKEN"),
+            status=True,  # success
             text=f"There are house to check: {get_result}",
             channel="#houseprices",
-        ).execute()
+        )
+
+        notify(**slack_load)
 
     # my tasks
     response = get_houses(postal)
-    notify = price_notification(response)  # noqa
+    notify_ = price_notification(response)  # noqa
 
 
 find_price_dag = slack_price_notification(postal=2650)
