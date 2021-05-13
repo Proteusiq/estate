@@ -103,7 +103,7 @@ def slack_price_notification(postal: Optional[int] = 2650, **kwargs):
     @task()
     def price_notification(get_result: dict) -> None:
 
-        slack = SlackAPIPostOperator(
+        return SlackAPIPostOperator(
             task_id="price_notification",
             username="airflow_bot",
             token=environ.get("SLACK_TOKEN"),
