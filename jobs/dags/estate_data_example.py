@@ -8,7 +8,6 @@ from airflow.models.dag import DAG
 from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy_operator import DummyOperator
 
-import pandas as pd
 
 from webscrapers.estates import BoligaSold  # noqa
 from webscrapers.estates import Estate  # noqa
@@ -73,7 +72,7 @@ with DAG(
     description="Populate data from home.dk estate.dk and nybolig.dk",
     default_args=args,
     schedule_interval="@daily",
-    start_date=datetime(2021, 5, 1),
+    start_date=datetime(2021, 5, 1, 22, 45),
     max_active_runs=4,
     tags=["estate_data"],
 ) as dag:

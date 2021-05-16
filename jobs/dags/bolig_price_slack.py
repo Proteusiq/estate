@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from io import BytesIO
 from os import environ
 from typing import Optional
