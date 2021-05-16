@@ -151,7 +151,7 @@ Estate(Services)        # initiate with estate recent home as url
 - [ ] Add tests Airflow dags and Scrapers
 - [ ] Add Grafana visualization of tasks and estates prices
 
-![dev](images/dev.png)
+![dev](images/flow_example.png)
 
 #### Repos that made this project possible and lots of Github issues:
 
