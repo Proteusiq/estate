@@ -26,7 +26,7 @@ minio_args = {
 @dag(
     default_args=default_args,
     schedule_interval="*/30 * * * *",
-    start_date=datetime.now() + timedelta(minutes=30),
+    start_date=datetime(2021, 5, 1),
     tags=["slack_me"],
 )
 def slack_price_notification(postal: Optional[int] = 2650, **kwargs):

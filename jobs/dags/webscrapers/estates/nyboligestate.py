@@ -2,53 +2,65 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import numpy as np
 import pandas as pd
-from pipelines.boliger.bolig import Bolig
+from webscrapers.abc_estates import Bolig
 
-# Building API to Boliga.dk
+# Building API to Nybolig | Estate
 # Requirements:
 #      Overide get_page and get_pages.
 #      get_page: Task: Update params and requests GET|POST logic in get_pages
 #      get_pages: Task: Update total pages logic only
 
 
-class Boliga(Bolig):
+class Services(Bolig):
 
     """
-    Bolig Data From Boliga.dk API
+    Bolig Data From nybolig.dk and estate.dk
 
     Network:
-        Request URL:  https://api.boliga.dk/api/v2/search/results?pageSize=50&page=2
-        Request URL:  https://api.boliga.dk/api/v2/sold/search/results?pageSize=50&page=2
+        Request URL: https://www.nybolig.dk/Services/PropertySearch/Search
+        Request URL: https://www.estate.dk/Services/PropertySearch/Search
 
+    POST LOAD:
+            'isRental': False,
+            'mustBeSold': False,
+            'mustBeInProgress': False,
+            'siteName': 'Estate|Nybolig',
+            'take': 100,
+            'skip': 0,
+            'sort': 0
 
     Usage:
     ```python
-    # instantiate a class
-    boliga_recent = BoligaRecent(url='https://api.boliga.dk/api/v2/search/results')
-
-    # or
-    boliga_sold = BoligaSold(url='https://api.boliga.dk/api/v2/sold/search/results')
+    # instantiate a class. Services is inhereted by Nybolig(Services) | Estate(Serices)
+    nybolig = Nybolig(url='https://www.nybolig.dk/Services/PropertySearch/Search')
+    estate = Estate(url='https://www.estate.dk/Services/PropertySearch/Search')
 
     # one page per call
-    print('[+] Start single thread calls\n for boliga recent prices estates')
-    _ = {boliga_recent.get_page(page=page, pagesize=15, verbose=True) for page in range(0,10)}
+    print('[+] Nybolig | Start single thread calls\n')
+    _ = {nybolig.get_page(page=page, pagesize=15, verbose=True) for page in range(0,10)}
+
+    # one page per call
+    print('[+] Estate | Start single thread calls\n')
+
+    _ = {estate.get_page(page=page, pagesize=15, verbose=True) for page in range(0,10)}
 
     ## store data to df
-    df = pd.concat(boliga.store.values(), ignore_index=True)
-    print(f'Data Stored {df.shape[0]} rows\n')
+    df = pd.concat(estate.store.values(), ignore_index=True)
+    print(f'Data Stored {df.shape[0]} rows from estate.dk\n')
+    print(f'Data Stored {pd.concat(nybolig.store.values(), ingore_index=True).shape[0]} rows from nybolig.dk\n')
 
 
     # multipe pages per call
     workers = 6
-    print(f'[+] Start {workers} threads calls\n for boliga sold estates')
-    boliga_sold.get_pages(start_page=6,end_page=10, pagesize=200, workers=6, verbose=True)
-    dt = boliga_sold.DataFrame
+    print(f'[+] Start {workers} threads calls\n')
+    estate.get_pages(start_page=6,end_page=10, pagesize=200, workers=6, verbose=True)
+    dt = estate.DataFrame
     print(dt.dtypes) # data types
     ```
     """
 
-    def get_page(self, page=0, pagesize=100, verbose=False):
-        """Gather Data From Boliga API
+    def get_page(self, page=0, pagesize=100, verbose=False, **kwargs):
+        """Gather Data From Estate | Nybolig API
             page:int page number. default value 0
             pagesize:int number of boligs in a page. default value 100
             verbose:bool print mining progress. default value False
@@ -56,18 +68,31 @@ class Boliga(Bolig):
         Returns: self.store: list of DataFrame
         """
 
+        take = pagesize
+        skip = pagesize * page
+
+        # www.[souce].dk/api ...
+        source = self.BASE_URL.split(".")[1].title()
+
         params = {
-            "page": page,
-            "pageSize": pagesize,
+            "isRental": False,
+            "mustBeSold": False,
+            "mustBeInProgress": False,
+            "siteName": source,
+            "take": take,
+            "skip": skip,
+            "sort": 0,
         }
 
-        r = self.session.get(self.BASE_URL, params=params)
+        params.update(kwargs)
+
+        r = self.session.post(self.BASE_URL, data=dict(params))
 
         if r.ok:
             data = r.json()
 
-            self.store[page] = pd.DataFrame(data.get("results"))
-            self.max_pages = data.get("totalPages")
+            self.store[page] = pd.DataFrame(data.get("Results"))
+            self.max_pages = data.get("TotalAmountOfResults")
 
         else:
             self.store
@@ -81,7 +106,13 @@ class Boliga(Bolig):
         return self
 
     def get_pages(
-        self, start_page=0, end_page=None, pagesize=100, workers=4, verbose=False
+        self,
+        start_page=0,
+        end_page=None,
+        pagesize=100,
+        workers=4,
+        verbose=False,
+        **kwargs,
     ):
         """
          Parallel Gathering Data From Home
@@ -94,11 +125,11 @@ class Boliga(Bolig):
         """
 
         # Make the first call to get total number of pages for split call pagesize split
-
+        # TODO: Pass kwargs
         self.get_page(page=start_page, pagesize=pagesize, verbose=verbose)
 
         if end_page is None:
-            total_pages = self.max_pages
+            total_pages = self.max_pages / pagesize
         else:
             total_pages = start_page + end_page + 1
 
@@ -127,9 +158,9 @@ class Boliga(Bolig):
         return self
 
 
-class BoligaRecent(Boliga):
+class Estate(Services):
     pass
 
 
-class BoligaSold(Boliga):
+class Nybolig(Services):
     pass

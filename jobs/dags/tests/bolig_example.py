@@ -3,11 +3,11 @@ Main example of using the design
     Note: Use for educational purposes only
 """
 import pandas as pd  # Needed for single threads
-from pipelines.boliger import BoligaRecent
-from pipelines.boliger import BoligaSold
-from pipelines.boliger import Estate
-from pipelines.boliger import Home
-from pipelines.boliger import Nybolig
+from webscrapers.estates import BoligaRecent
+from webscrapers.estates import BoligaSold
+from webscrapers.estates import Estate
+from webscrapers.estates import Home
+from webscrapers.estates import Nybolig
 
 
 # Home example
