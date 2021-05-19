@@ -73,6 +73,7 @@ with DAG(
     default_args=args,
     schedule_interval="@daily",
     start_date=datetime(2021, 5, 1, 22, 45),
+    catchup=False,
     max_active_runs=4,
     tags=["estate_data"],
 ) as dag:

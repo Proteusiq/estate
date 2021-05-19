@@ -11,6 +11,7 @@ from helpers.dump_loader import dump_dataf  # noqa
 default_args = {
     "owner": "Prayson",
     "catchup_by_default": False,
+    "depends_on_past": False,
 }
 
 
@@ -18,6 +19,7 @@ default_args = {
     default_args=default_args,
     schedule_interval="3 * * * *",  # "*/30 * * * *"
     start_date=datetime(2021, 5, 1),
+    catchup=False,
     tags=["slack_me"],
 )
 def slack_price_notification(postal: Optional[int] = 2650, **kwargs):

@@ -20,6 +20,7 @@ default_args = {
     default_args=default_args,
     schedule_interval="1 * * * *",
     start_date=datetime(2021, 5, 1),
+    catchup=False,
     tags=["speed_traps"],
 )
 def get_fartkontrol_station(
