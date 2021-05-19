@@ -1,31 +1,22 @@
 from datetime import datetime
-from io import BytesIO
-from os import environ
 from typing import Optional
 from airflow.decorators import dag, task
-
-from minio import Minio
 import pandas as pd
 import httpx
 
-from notification_senders.slack.sender import notify
+from notification_senders.slack.sender import notify  # noqa
+from helpers.dump_loader import dump_dataf  # noqa
+
 
 default_args = {
     "owner": "Prayson",
     "catchup_by_default": False,
 }
 
-minio_args = {
-    "endpoint": environ.get("S3_ENDPOINT_URI", "minio:9000"),
-    "access_key": environ.get("AWS_ACCESS_KEY_ID", "danpra"),
-    "secret_key": environ.get("AWS_SECRET_ACCESS_KEY", "miniopwd"),
-    "secure": False,
-}
-
 
 @dag(
     default_args=default_args,
-    schedule_interval="*/30 * * * *",
+    schedule_interval="3 * * * *",  # "*/30 * * * *"
     start_date=datetime(2021, 5, 1),
     tags=["slack_me"],
 )
@@ -73,18 +64,8 @@ def slack_price_notification(postal: Optional[int] = 2650, **kwargs):
 
         if not dataf.empty:
             bucket_name = "bolig-price"
-            client = Minio(**minio_args)
-            if not client.bucket_exists(bucket_name):
-                client.make_bucket(bucket_name)
-
-            dataf_json = dataf.to_json().encode("utf-8")
-
-            res = client.put_object(
-                bucket_name,
-                f"bolig_{postal}_{now.strftime('%Y%m%d_%H%M%S')}.json",
-                data=BytesIO(dataf_json),
-                length=len(dataf_json),
-                content_type="application/json",
+            res = dump_dataf(
+                dataf=dataf, bucket_name=bucket_name, file_name=f"bolig_{postal}"
             )
 
             return {
@@ -93,7 +74,6 @@ def slack_price_notification(postal: Optional[int] = 2650, **kwargs):
                 "object_name": res.object_name,
             }
         else:
-
             return {
                 "etag": None,
                 "bucket_name": None,

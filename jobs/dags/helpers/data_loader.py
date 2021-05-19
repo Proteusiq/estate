@@ -8,7 +8,7 @@ CONNECTION_URI = BaseHook.get_connection("bolig_db").get_uri()
 
 def send_bolig(bolig: pd.DataFrame, table: str, **kwargs) -> None:
 
-    if bolig.empty:
+    if not bolig.empty:
         return f"No DataFrame to send to {table}"
 
     # postgres query roomSize will require "roomSize"
