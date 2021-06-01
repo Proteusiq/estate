@@ -69,9 +69,10 @@ RUN set -ex \
     && pip install tenacity \
     && pip install httpx \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,slack,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
-    && pip install 'redis' \
-    && pip install 'minio' \
-    && pip install 'boto3' \
+    && pip install redis \
+    && pip install minio \
+    && pip install boto3 \
+    && pip install rich \
     && pip uninstall -y SQLAlchemy\
     && pip install 'SQLAlchemy==1.3.15'\
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
