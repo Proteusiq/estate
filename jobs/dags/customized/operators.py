@@ -3,6 +3,7 @@
 
 from airflow.models import BaseOperator
 from helpers.data_loader import send_bolig  # noqa
+from helpers.loggers import logger
 
 
 class ScrapEstateOperator(BaseOperator):
@@ -17,12 +18,14 @@ class ScrapEstateOperator(BaseOperator):
 
     def execute(self, context):
 
-        print(f"\n[+] Using {self.api_name} to demostrate advance web scraping ideas\n")
+        logger.info(
+            f"\n[+] Using {self.api_name} to demostrate advance web scraping ideas\n"
+        )
 
         # instantiate a class
         bolig = self.scraper_cls(url=self.url)
 
-        print(
+        logger.info(
             f'[+] Start {self.params["workers"]} threads for {self.params["pagesize"]} pagesize per call: '
             f'start at page {self.params["start_page"]} and at page {self.params["end_page"]} \n'
         )
@@ -30,5 +33,5 @@ class ScrapEstateOperator(BaseOperator):
         # homes.DataFrame.drop(columns=['floorPlan', 'pictures'], inplace=True)
 
         send_bolig(bolig.DataFrame, f"{self.api_name.split('.')[0]}")  # refactor this
-        print(f"Data gathered {bolig.DataFrame.shape[0]} rows\n")
+        logger.info(f"Data gathered {bolig.DataFrame.shape[0]} rows\n")
         return self.params
