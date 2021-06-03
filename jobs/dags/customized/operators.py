@@ -3,7 +3,7 @@
 
 from airflow.models import BaseOperator
 from helpers.data_loader import send_bolig  # noqa
-from helpers.loggers import logger
+from helpers.loggers import logger  # noqa
 
 
 class ScrapEstateOperator(BaseOperator):

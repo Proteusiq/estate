@@ -1,6 +1,7 @@
 from airflow.hooks.base_hook import BaseHook
 import sqlalchemy
 import pandas as pd
+from helpers.loggers import logger  # noqa
 
 
 CONNECTION_URI = BaseHook.get_connection("bolig_db").get_uri()
@@ -21,6 +22,6 @@ def send_bolig(bolig: pd.DataFrame, table: str, **kwargs) -> None:
     try:
         engine = sqlalchemy.create_engine(CONNECTION_URI)
         bolig.to_sql(table, engine, if_exists="append")
-        print(f"There were {len(bolig)} estates send to {table}")
+        logger.info(f"There were {len(bolig)} estates send to {table}")
     finally:
         engine.dispose()
