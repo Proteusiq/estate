@@ -1,6 +1,10 @@
 # Advance Web Scraping
 > Using airflow to schedule, monitor, and log. Postgres as backend and data storage. Redis as a broker
 
+## Update: 2022-04-18
+Migrating to Dagster plans
+
+
 ![advance_image](images/advance_design.jpg)
 
 ### Getting Started
