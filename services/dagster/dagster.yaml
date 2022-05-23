@@ -1,0 +1,11 @@
+run_launcher:
+  module: estates
+  class: DockerRunLauncher
+  config:
+    env_vars:
+      - DAGSTER_POSTGRES_USER
+      - DAGSTER_POSTGRES_PASSWORD
+      - DAGSTER_POSTGRES_DB
+    container_kwargs:
+      volumes:
+        - ./estates/estate/repository.py:/opt/dagster/app/
