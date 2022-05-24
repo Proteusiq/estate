@@ -2,7 +2,10 @@
 > Using airflow to schedule, monitor, and log. Postgres as backend and data storage. Redis as a broker
 
 ## Update: 2022-04-18
+
 Migrating to Dagster plans
+
+
 
 
 ![advance_image](images/advance_design.jpg)
@@ -167,4 +170,19 @@ Docker Basics:
 Kill all containers
 ```bash
 docker container ps | awk {' print $1 '} | tail -n+2 > tmp.txt; for line in $(cat tmp.txt); do docker container kill $line; done; rm tmp.txt
+```
+
+
+# Dagster
+
+Steps for local setup: assuming pyenv -v 2.3.0 and poetry 1.1.13 or above
+```bash
+pyenv install 3.10.4 && pyenv local 3.10.4
+poetry install && poetry shell # or from scratch  `poetry add pandas httpx sqlalchemy psycopg2-binary dagster dagit`
+```
+
+## Dagster
+```bash
+# create a new dagster template with:
+dagster new-project <project_name> 
 ```

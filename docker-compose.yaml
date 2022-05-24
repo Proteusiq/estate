@@ -1,0 +1,76 @@
+version: '3.3'
+services:
+    dagit:
+        build:
+            context: estates
+            dockerfile: ./Dockerfile
+        entrypoint:
+            - dagit
+            - -h
+            - "0.0.0.0"
+            - -p
+            - "3000"
+            - -w
+            - workspace.yaml
+        container_name: dagit
+        expose:
+            - 3000
+        ports:
+            - 3000:3000
+        depends_on:
+            - postgres
+        volumes:
+            - ./estates/services:/opt/dagster/dagster_home
+        env_file:
+            - ./estates/dagit.env
+
+    daemon:
+        build:
+            context: estates
+            dockerfile: ./Dockerfile
+        entrypoint:
+            - dagster-daemon
+            - run
+        container_name: daemon
+        restart: on-failure
+        volumes:
+            - ./estates/services:/opt/dagster/dagster_home
+
+        env_file:
+            - ./estates/dagit.env
+    postgres:
+        container_name: postgres
+        build:
+            context: ./services/postgres
+        env_file:
+            - ./services/postgres/postgres.env
+        # volumes:
+        #     - pgdata:/var/lib/postgresql/data
+        restart: always
+
+    pgadmin:
+        container_name: pgUI
+        image: dpage/pgadmin4
+        depends_on:
+            - postgres
+        ports:
+            - 5050:80
+        env_file:
+            - ./services/pgadmin/pgadmin.env
+        restart: unless-stopped
+
+    minio:
+        container_name: minio
+        image: minio/minio:latest
+        ports:
+            - 9000:9000
+            - 9001:9001
+        command: server /data --console-address ":9001"
+        env_file:
+            - ./services/minio/minio.env
+        volumes:
+            - ./services/minio/data:/data
+
+# volumes:
+#     pgdata:
+#         external: true
