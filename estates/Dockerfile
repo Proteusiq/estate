@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.10-slim
 
 # Checkout and install dagster libraries needed to run the gRPC server
 # exposing your repository to dagit and dagster-daemon, and to load
@@ -16,8 +16,8 @@ ENV DAGSTER_HOME=/opt/dagster/dagster_home
 
 RUN mkdir -p $DAGSTER_HOME
 
-COPY dagster.yaml estates/repository.py $DAGSTER_HOME
-COPY workspace.yaml /opt/dagster/app/
+COPY dagster.yaml  $DAGSTER_HOME
+COPY estates/repository.py workspace.yaml  /opt/dagster/app/
 
 # Add repository code
 
