@@ -118,3 +118,6 @@ services/efk/elasticsearch/*
 # Minio
 services/minio/data
 
+# Dagster
+estates/dagster_home/
+

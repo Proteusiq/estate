@@ -20,7 +20,8 @@ services:
         depends_on:
             - postgres
         volumes:
-            - ./estates/services:/opt/dagster/dagster_home
+            - ./estates/dagster_home:/opt/dagster/dagster_home
+            - ./estates/estates:/opt/dagster/app/estates
         env_file:
             - ./estates/dagit.env
 
@@ -34,8 +35,8 @@ services:
         container_name: daemon
         restart: on-failure
         volumes:
-            - ./estates/services:/opt/dagster/dagster_home
-
+            - ./estates/dagster_home:/opt/dagster/dagster_home
+            - ./estates/estates:/opt/dagster/app/estates
         env_file:
             - ./estates/dagit.env
     postgres:
