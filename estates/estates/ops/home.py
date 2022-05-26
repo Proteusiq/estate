@@ -5,7 +5,7 @@ from estates.bolig.scraper import ScrapEstate
 
 
 @op
-def get_home():
+def get_home() -> list[dict]:
     """
     An op definition. This example op outputs a single string.
 
@@ -32,7 +32,7 @@ def get_home():
                 api_name="home.dk",
                 scraper_cls=Home,
                 params=param,
-            )
+            ).execute()
             for i, param in enumerate(params)
         ]
     return data
