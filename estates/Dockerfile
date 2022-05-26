@@ -8,7 +8,12 @@ RUN pip install \
     dagster \
     dagit \
     dagster-postgres \
-    dagster-docker
+    dagster-docker \
+    requests \
+    pandas \
+    numpy \
+    sqlalchemy \
+    psycopg2-binary
 
 # Set $DAGSTER_HOME and copy dagster instance there
 

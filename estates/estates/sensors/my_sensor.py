@@ -1,9 +1,9 @@
 from dagster import RunRequest, sensor
 
-from estates.jobs.say_hello import say_hello_job
+from estates.jobs.home_job import make_home_job
 
 
-@sensor(job=say_hello_job)
+@sensor(job=make_home_job)
 def my_sensor(_context):
     """
     A sensor definition. This example sensor always requests a run at each sensor tick.
