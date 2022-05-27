@@ -1,5 +1,5 @@
 from dagster import op, Field
-from estates.bolig.core.scrappers import Home  # noqa
+from estates.bolig.core.scrappers import Home
 from estates.bolig.scraper import ScrapEstate
 
 
@@ -11,10 +11,7 @@ from estates.bolig.scraper import ScrapEstate
 )
 def get_home(context) -> list[dict]:
     """
-    An op definition. This example op outputs a single string.
-
-    For more hints about writing Dagster ops, see our documentation overview on Ops:
-    https://docs.dagster.io/concepts/ops-jobs-graphs/ops
+    Get home
     """
 
     worker = context.op_config.get("workers")
