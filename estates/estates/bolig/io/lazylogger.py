@@ -40,7 +40,7 @@ logger.addHandler(stdout_handler)
 logger.addHandler(file_handler)
 
 
-def catch(f:Callable) -> Callable:
+def catch(f: Callable) -> Callable:
     @wraps(f)
     def wrap(*args, **kwargs):
         try:
@@ -51,6 +51,7 @@ def catch(f:Callable) -> Callable:
             raise e
 
     return wrap
+
 
 def pipeline(function: Callable) -> Callable:
     @wraps(function)
@@ -66,6 +67,5 @@ def pipeline(function: Callable) -> Callable:
     return wrapper
 
 
-
 logger.catch = catch  # type:ignore
-logger.pipelines = pipeline # type:ignore
+logger.pipelines = pipeline  # type:ignore
