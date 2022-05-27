@@ -1,6 +1,8 @@
 from dagster import op, Field
+from pandas import DataFrame, concat
 from estates.bolig.core.scrappers import Home
 from estates.bolig.scraper import ScrapEstate
+from estates.warehouse.postgres import sqlalchemy_postgres_warehouse_resource
 
 
 @op(
@@ -9,7 +11,7 @@ from estates.bolig.scraper import ScrapEstate
         "pagesize": Field(int, is_required=False, default_value=15),
     }
 )
-def get_home(context) -> list[dict]:
+def get_home(context) -> list[DataFrame]:
     """
     Get home
     """
@@ -39,3 +41,34 @@ def get_home(context) -> list[dict]:
         for i, param in enumerate(params)
     ]
     return data
+
+
+@op(
+    config_schema={
+        "ignore_index": Field(bool, is_required=False, default_value=True),
+    }
+)
+def prepare_home(context, dataframes: list[DataFrame]) -> DataFrame:
+
+    ignore_index = context.op_config.get("ignore_index")
+    dataframe = concat(dataframes, ignore_index=ignore_index)
+
+    if dataframe.empty:
+        raise ValueError("No DataFrame to send process")
+
+    # postgres query roomSize will require "roomSize"
+    dataframe.columns = dataframe.columns.str.lower()
+
+    # columns with dict causes issues. stringfy thme
+    columns = dataframe.select_dtypes("object").columns
+    dataframe[columns] = dataframe[columns].astype(str)
+
+    return dataframe
+
+
+@op(required_resource_keys={"warehouse"})
+def store_home(context, dataframe: DataFrame):
+
+    context.log.info(f"Loading data {dataframe.shape} to Postgres ...")
+    context.resources.warehouse.update_estate(dataframe)
+    context.log.info("Loading data to completed")
