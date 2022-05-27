@@ -3,7 +3,9 @@ from dagster import schedule
 from estates.jobs.home_job import make_home_job
 
 
-@schedule(cron_schedule="0 * * * *", job=make_home_job, execution_timezone="Europe/Copenhagen")
+@schedule(
+    cron_schedule="0 * * * *", job=make_home_job, execution_timezone="Europe/Copenhagen"
+)
 def my_hourly_schedule(_context):
     """
     A schedule definition. This example schedule runs once each hour.

@@ -2,6 +2,7 @@ from dagster import job
 
 from estates.ops.home import get_home
 
+
 @job
 def make_home_job():
     """

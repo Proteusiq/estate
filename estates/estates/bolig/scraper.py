@@ -2,7 +2,6 @@ from estates.bolig.io.lazylogger import logger  # noqa
 
 
 class ScrapEstate:
-
     def __init__(self, url, api_name, scraper_cls, params, *args, **kwargs):
         self.url = url
         self.api_name = api_name
