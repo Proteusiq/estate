@@ -20,7 +20,12 @@ class SqlAlchemyPostgresWarehouse:
         self._table_name = table_name
 
     def update_estate(self, dataframe: DataFrame):
-        dataframe.to_sql(self._table_name, con=self._engine, if_exists=self._if_exists)
+        dataframe.to_sql(
+            self._table_name,
+            con=self._engine,
+            if_exists=self._if_exists,
+            index=False,
+        )
 
 
 @resource(
