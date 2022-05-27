@@ -1,14 +1,10 @@
 # Advance Web Scraping
-> Using airflow to schedule, monitor, and log. Postgres as backend and data storage. Redis as a broker
-
-## Update: 2022-04-18
-
-Migrating to Dagster plans
-
-
+> Using dagster to schedule, monitor, and log. Postgres as backend and data storage. Celery[Redis] as a broker
 
 
 ![advance_image](images/advance_design.jpg)
+
+> Migrating from airflow to dagster in progress ...
 
 ### Getting Started
 Checklist to start our services
@@ -16,7 +12,7 @@ Checklist to start our services
 - [ ] make sure docker is running, and volume mounting is enabled.
 - [ ] git clone [advance_scraping](https://github.com/Proteusiq/advance_scraping.git)
 - [ ] set environment variables
-- [ ] run the service with a single docker-compose command
+- [ ] run the service with a single docker compose command
 
 ### Git Clone
 ```bash
@@ -34,7 +30,7 @@ Each service has `service.env`. Edit them as you see fit.
 ##### Check the environments to be set by docker-compose with:
 
 ```bash
-docker-compose config
+docker compose config
 ```
 
 Make sure you can see the environment variable docker-compose fetches from `.env`
@@ -65,7 +61,7 @@ Checklist to set slack integration
 > Do `docker volume create --name=pgdata` to create a named volume (to delete `docker volume rm pgdata`)
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Note: _Only the initial build_ will take a while. Go grab a cup of coffee as docker downloads and install the necessary tools. 
@@ -75,16 +71,14 @@ See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 
 ## UI Services:
 ![advance_image](images/airflow_dag.png)
-- ##### Airflow:  `address:` __localhost:8080__ `default_user:` __danpra__ `default_pwd`: __changeme__
+- ##### Dagster:  `address:` __localhost:3000__ 
 - ##### pgAdmin: `address:` __localhost:5050__ `default_email:` __pgadmin@example.com__ `default_pwd`: __admin__
 - ##### minio: `address:` __localhost:9000__ `default_key:` __danpra__ `default_secret:` __miniopwd__
 
-## Extra [not part of defaults]
-- ##### Ridis Insight: `address:` __localhost:8001__ 
-- ##### Grafana: `address:` __localhost:3000__  
 
-#### Airflow UI
-Head to `localhost:8080` on your browser. Login with credentials used in your environment ADMIN_USER and ADMIN_PASSWORD variables. Example: `danpra` and password `airflowpwd` 
+
+#### Dagster UI
+Head to `localhost:3000` on your browser. 
 
 #### Postgres Admin Tool
 Head to `localhost:5050`. Login with credentials used in your environment PGADMIN_DEFAULT_EMAIL and PGADMIN_DEFAULT_PASSWORD variables. Example: `danpra@example.com` and password `postgrespwd`
@@ -96,39 +90,22 @@ Adding a connection to `postgres` DB in `pgAdmin`, click `Add New Server`. Type 
  ![postgres_image](images/pgAdmin_connection.png) 
 
 
-<br>
-<details><summary>Extra Services</summary>
-<p>
-
- #### 
- > Using efk.yml to add more services [not part of the default]
- ### Grafana
- Head to `localhost:3000`. Login with user `admin` and password `grafanapwd`. Change credentials in `containers/grafana/config.monitoring`. Add Postgres as a data source with the Postgres username and password as we did in pgAdmin.
-
-![grafana_image](images/grafana_postgres.png) 
-> Charts coming soon
-</p>
-</details>
-<br>
-
-# Airflow's Architecture:
-
-![airflow architecture](https://airflow.apache.org/docs/apache-airflow/stable/_images/graphviz-91fd3ca4f3dc01a69b3f84fbcd6b5c7975945ba4.png)
-> source: [Airflow Celery Executor](https://airflow.apache.org/docs/apache-airflow/stable/executor/celery.html)
+# Dagster's Architecture:
+[Coming soon]
 
 
 ### Stop services with:
 Press `Ctrl + C` to stop our services without killing your volumes data. Then do
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 Use docker-compose down -v to remove also the volumes. 
 > **WARNING**: remember to backup your data before removing volumes. 
 
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 See: [docker-compose down](https://docs.docker.com/compose/reference/down/) options
 ### Web Scraping and Design Pattern [Opinionated Rumbling]
@@ -152,17 +129,10 @@ Estate(Services)        # initiate with estate recent home as url
 
 ### Todo:
 - [X] Add a web-scraper examples
-- [ ] Add simple Airflow examples
-- [ ] Add an introduction to Airflow  README
+- [ ] Add simple Dagster examples
 - [ ] Add custom error handling class
-- [ ] Add tests Airflow dags and Scrapers
-- [ ] Add Grafana visualization of tasks and estates prices
 
 ![dev](images/flow_example.png)
-
-#### Repos that made this project possible and lots of Github issues:
-
- [Docker Apache Airflow](https://github.com/puckel/docker-airflow)
 
 
 Docker Basics:
