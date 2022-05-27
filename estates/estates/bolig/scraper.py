@@ -18,7 +18,7 @@ class ScrapEstate:
 
         logger.info(
             f'[+] Start {self.params["workers"]} threads for {self.params["pagesize"]} pagesize per call: '
-            f'start at page {self.params["start_page"]} and at page {self.params["end_page"]} \n'
+            f'start at page {self.params["start_page"]} to page {self.params["end_page"]} \n'
         )
         bolig.get_pages(**self.params)
         # homes.DataFrame.drop(columns=['floorPlan', 'pictures'], inplace=True)

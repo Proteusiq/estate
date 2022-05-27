@@ -2,7 +2,6 @@ from dagster import op, Field
 from pandas import DataFrame, concat
 from estates.bolig.core.scrappers import Home
 from estates.bolig.scraper import ScrapEstate
-from estates.warehouse.postgres import sqlalchemy_postgres_warehouse_resource
 
 
 @op(

@@ -1,1 +1,1 @@
-from .repository import estates
+from .repository import estates  # noqa
