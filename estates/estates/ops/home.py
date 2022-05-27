@@ -4,8 +4,8 @@ from estates.bolig.scraper import ScrapEstate
 
 
 
-@op
-def get_home() -> list[dict]:
+@op(config_schema={"workers": int, "pagesize": int})
+def get_home(context) -> list[dict]:
     """
     An op definition. This example op outputs a single string.
 
@@ -13,12 +13,15 @@ def get_home() -> list[dict]:
     https://docs.dagster.io/concepts/ops-jobs-graphs/ops
     """
 
+    worker = context.op_config.get("workers", 5)
+    pagesize = context.op_config.get("pagesize", 15)
+
     params = (
         {
-            "workers": 5,
+            "workers": worker,
             "start_page": start_page,
             "end_page": end_page,
-            "pagesize": 15,
+            "pagesize": pagesize,
             "verbose": True,
         }
         for start_page, end_page in {(1, 5), (5, 15), (15, 20)}
