@@ -1,5 +1,6 @@
 import logging
 import sys
+import time
 from tempfile import gettempdir
 from typing import Callable
 from functools import wraps
@@ -24,9 +25,7 @@ file_handler.setLevel(logging.ERROR)
 
 # the formatters look
 fmt_stdout = "%(message)s"
-fmt_file = (
-    "[%(levelname)s] %(asctime)s | %(filename)s:%(funcName)s:%(lineno)d | %(message)s"
-)
+fmt_file = "[%(levelname)s] %(asctime)s | %(filename)s:%(funcName)s:%(lineno)d | %(message)s"
 
 stdout_formatter = logging.Formatter(fmt_stdout)
 file_formatter = logging.Formatter(fmt_file)
@@ -59,9 +58,7 @@ def pipeline(function: Callable) -> Callable:
         start_time = time.perf_counter()
         result = function(*args, **kwargs)
         time_taken = time.perf_counter() - start_time
-        logger.debug(
-            f"{function.__name__} completed | shape = {result.shape:} | time {time_taken:.3f}s"
-        )
+        logger.debug(f"{function.__name__} completed | shape = {result.shape:} | time {time_taken:.3f}s")
         return result
 
     return wrapper
