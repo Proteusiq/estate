@@ -58,7 +58,7 @@ def prepare_home(context, dataframes: list[DataFrame]) -> DataFrame:
     dataframe = concat(dataframes, ignore_index=ignore_index)
 
     if dataframe.empty:
-        raise ValueError("No DataFrame to send process")
+        raise ValueError("No DataFrame to preprocess")
 
     # postgres query roomSize will require "roomSize"
     dataframe.columns = dataframe.columns.str.lower()
