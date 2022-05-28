@@ -2,6 +2,7 @@ from dagster import op, Field, AssetMaterialization, MetadataValue
 from pandas import DataFrame, concat
 from estates.bolig.core.scrappers import Home
 from estates.bolig.scraper import ScrapEstate
+from estates.bolig.io.sizeof import size_of_dataframe
 
 
 @op(
@@ -88,5 +89,5 @@ def emit_home_metadata(context, dataframe: DataFrame):
     """
     yield AssetMaterialization(
         asset_key=context.resources.warehouse.table_name,
-        metadata_entries=[MetadataValue.text(dataframe.info(memory_usage="deep"))],
+        metadata_entries=[MetadataValue.text(size_of_dataframe(dataframe, unit="MB"))],
     )
