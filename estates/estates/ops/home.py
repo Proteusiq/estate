@@ -92,6 +92,6 @@ def emit_home_metadata(context, dataframe: DataFrame):
         metadata={
             "size (megabytes)": MetadataValue.text(size_of_dataframe(dataframe, unit="MB")),
             "number rows": MetadataValue.int(dataframe.shape[0]),
-            "# missing values": MetadataValue.int(dataframe.isna().sum().sum()),
+            "# missing values": MetadataValue.int(int(dataframe.isna().sum().sum())),
         },
     )
