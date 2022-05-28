@@ -87,11 +87,13 @@ def emit_home_metadata(context, dataframe: DataFrame):
     """
     Emit Home Data Size: Home metadata
     """
-    yield AssetMaterialization(
-        asset_key=context.resources.warehouse.table_name,
-        metadata={
-            "size (megabytes)": MetadataValue.text(size_of_dataframe(dataframe, unit="MB")),
-            "number rows": MetadataValue.int(dataframe.shape[0]),
-            "# missing values": MetadataValue.int(int(dataframe.isna().sum().sum())),
-        },
+    context.log_event(
+        AssetMaterialization(
+            asset_key=context.resources.warehouse.table_name,
+            metadata={
+                "size (megabytes)": MetadataValue.text(size_of_dataframe(dataframe, unit="MB")),
+                "number rows": MetadataValue.int(dataframe.shape[0]),
+                "# missing values": MetadataValue.int(int(dataframe.isna().sum().sum())),
+            },
+        )
     )
