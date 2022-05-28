@@ -89,5 +89,9 @@ def emit_home_metadata(context, dataframe: DataFrame):
     """
     yield AssetMaterialization(
         asset_key=context.resources.warehouse.table_name,
-        metadata_entries=[MetadataValue.text(size_of_dataframe(dataframe, unit="MB"))],
+        metadata={
+            "size (megabytes)": MetadataValue.text(size_of_dataframe(dataframe, unit="MB")),
+            "number rows": MetadataValue.int(dataframe.shape[0]),
+            "# missing values": MetadataValue.int(dataframe.isna().sum().sum()),
+        },
     )
