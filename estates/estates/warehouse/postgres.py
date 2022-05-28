@@ -27,6 +27,10 @@ class SqlAlchemyPostgresWarehouse:
             index=False,
         )
 
+    @property
+    def table_name(self):
+        return self._table_name
+
 
 @resource(
     config_schema={
