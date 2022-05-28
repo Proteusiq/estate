@@ -87,6 +87,6 @@ def emit_home_metadata(context, dataframe: DataFrame):
     Emit Home Data Size: Home metadata
     """
     yield AssetMaterialization(
-        asset_key=context.warehouse.table_name,
+        asset_key=context.resources.warehouse.table_name,
         metadata_entries=[MetadataValue.text(dataframe.info(memory_usage="deep"))],
     )
