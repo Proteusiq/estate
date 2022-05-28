@@ -1,4 +1,4 @@
-from dagster import op, Field
+from dagster import op, Field, AssetMaterialization, MetadataValue
 from pandas import DataFrame, concat
 from estates.bolig.core.scrappers import Home
 from estates.bolig.scraper import ScrapEstate
@@ -12,7 +12,7 @@ from estates.bolig.scraper import ScrapEstate
 )
 def get_home(context) -> list[DataFrame]:
     """
-    Get home
+    Get home: Gather data from Home.dk
     """
 
     worker = context.op_config.get("workers")
@@ -49,6 +49,10 @@ def get_home(context) -> list[DataFrame]:
 )
 def prepare_home(context, dataframes: list[DataFrame]) -> DataFrame:
 
+    """
+    Prepare Home: Prepare data from Home.dk for upload to DataBase
+    """
+
     ignore_index = context.op_config.get("ignore_index")
     dataframe = concat(dataframes, ignore_index=ignore_index)
 
@@ -67,7 +71,22 @@ def prepare_home(context, dataframes: list[DataFrame]) -> DataFrame:
 
 @op(required_resource_keys={"warehouse"})
 def store_home(context, dataframe: DataFrame):
+    """
+    Load Home: Load Home data to DataBase
+    """
 
     context.log.info(f"Loading data {dataframe.shape} to Postgres ...")
     context.resources.warehouse.update_estate(dataframe)
     context.log.info("Loading data to completed")
+
+
+@op(required_resource_keys={"warehouse"})
+def emit_home_metadata(context, dataframe: DataFrame):
+
+    """
+    Emit Home Data Size: Home metadata
+    """
+    yield AssetMaterialization(
+        asset_key=context.resource_config.get("table_name"),
+        metadata_entries=[MetadataValue.text(dataframe.info(memory_usage="deep"))],
+    )
