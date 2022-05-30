@@ -1,4 +1,4 @@
-from dagster import op, Field, AssetMaterialization, MetadataValue
+from dagster import op, Field, Failure, AssetMaterialization, MetadataValue
 from pandas import DataFrame, concat
 from estates.bolig.core.scrappers import Home
 from estates.bolig.scraper import ScrapEstate
@@ -58,7 +58,9 @@ def prepare_home(context, dataframes: list[DataFrame]) -> DataFrame:
     dataframe = concat(dataframes, ignore_index=ignore_index)
 
     if dataframe.empty:
-        raise ValueError("No DataFrame to preprocess")
+        raise Failure(
+            description="No dataframe to preprocess",
+        )
 
     # postgres query roomSize will require "roomSize"
     dataframe.columns = dataframe.columns.str.lower()
