@@ -8,6 +8,7 @@ RUN pip install \
     dagster \
     dagit \
     dagster-postgres \
+    dagster-aws \
     dagster-docker \
     requests \
     pandas \
