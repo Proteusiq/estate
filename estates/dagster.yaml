@@ -49,6 +49,7 @@ compute_logs:
   config:
     bucket: "mycorp-dagster-compute-logs"
     prefix: "dagster-test-"
+    endpoint_url: "minio:9000"
 
 local_artifact_storage:
   module: dagster.core.storage.root
