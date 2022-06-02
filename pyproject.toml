@@ -9,7 +9,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = ">=3.8.0"
 pandas = "^1.4.2"
-httpx = "^0.22.0"
+httpx = "^0.23.0"
 SQLAlchemy = "^1.4.36"
 psycopg2-binary = "^2.9.3"
 dagster = "^0.14.16"
