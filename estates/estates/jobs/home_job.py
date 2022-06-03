@@ -1,9 +1,15 @@
 from dagster import job
 from estates.ops.home import get_home, prepare_home, store_home, emit_home_metadata
 from estates.warehouse.postgres import sqlalchemy_postgres_warehouse_resource
+from estates.warehouse.dataframe import dataframe_sqlite_io_manager
 
 
-@job(resource_defs={"warehouse": sqlalchemy_postgres_warehouse_resource})
+@job(
+    resource_defs={
+        "warehouse": sqlalchemy_postgres_warehouse_resource,
+        "io_manager": dataframe_sqlite_io_manager,
+    }
+)
 def make_home_job():
     """
     A job definition. This example job has a single op.
