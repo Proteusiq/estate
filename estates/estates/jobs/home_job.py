@@ -1,5 +1,6 @@
 from dagster import job
-from estates.ops.home import get_home, prepare_home, store_home, emit_home_metadata
+from estates.ops.home import get_home, prepare_home
+from estates.ops.general import store_dataframe, emit_dataframe_metadata
 from estates.warehouse.postgres import sqlalchemy_postgres_warehouse_resource
 
 
@@ -16,5 +17,5 @@ def make_home_job():
     https://docs.dagster.io/concepts/ops-jobs-graphs/jobs-graphs
     """
     home_dataframe = prepare_home(get_home())
-    store_home(home_dataframe)
-    emit_home_metadata(home_dataframe)
+    store_dataframe(home_dataframe)
+    emit_dataframe_metadata(home_dataframe)

@@ -1,11 +1,12 @@
 from dagster import op, Field, Failure, Noneable
-from pandas import DataFrame
-from estates.bolig.core.scrappers import Home
+from pandas import DataFrame, concat
+from estates.bolig.core.scrappers import Estate, Nybolig
 from estates.bolig.scraper import ScrapEstate
 
 
 @op(
     config_schema={
+        "url": str,
         "start_page": Field(int, is_required=False, default_value=1),
         "end_page": Field(Noneable(int), is_required=False, default_value=None),
         "pagesize": Field(int, is_required=False, default_value=15),
@@ -13,9 +14,9 @@ from estates.bolig.scraper import ScrapEstate
         "verbose": Field(bool, is_required=False, default_value=True),
     }
 )
-def get_home(context) -> DataFrame:
+def get_service(context) -> DataFrame:
     """
-    Get home: Gather data from Home.dk
+    Get home: Gather data from Estate.dk
     """
 
     params = {
@@ -27,19 +28,25 @@ def get_home(context) -> DataFrame:
     }
 
     return ScrapEstate(
-        url="https://home.dk/umbraco/backoffice/home-api/Search",
+        url=context.op_config.get("url"),
         api_name="home.dk",
-        scraper_cls=Home,
+        scraper_cls=Estate,
         params=params,
     ).execute()
 
 
-@op
-def prepare_home(context, dataframe: DataFrame) -> DataFrame:
-
+@op(
+    config_schema={
+        "ignore_index": Field(bool, is_required=False, default_value=True),
+    }
+)
+def prepare_services(context, dataf_x: DataFrame, dataf_y: DataFrame) -> DataFrame:
     """
     Prepare Home: Prepare data from Home.dk for upload to DataBase
     """
+
+    ignore_index = context.op_config.get("ignore_index")
+    dataframe = concat((dataf_x, dataf_y), ignore_index=ignore_index)
 
     if dataframe.empty:
         raise Failure(
