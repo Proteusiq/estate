@@ -72,14 +72,15 @@ def prepare_home(context, dataframes: list[DataFrame]) -> DataFrame:
     return dataframe
 
 
-@op(required_resource_keys={"warehouse"})
+@op(required_resource_keys={"warehouse", "database_connection"})
 def store_home(context, dataframe: DataFrame):
     """
     Load Home: Load Home data to DataBase
     """
 
     context.log.info(f"Loading data {dataframe.shape} to Postgres ...")
-    context.resources.warehouse.update_estate(dataframe)
+    engine = context.resources.database_connection
+    context.resources.warehouse.update_estate(dataframe, engine=engine)
     context.log.info("Loading data to completed")
 
 
