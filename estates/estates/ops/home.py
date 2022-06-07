@@ -1,5 +1,5 @@
-from dagster import op, Field, Failure, AssetMaterialization, MetadataValue
-from pandas import DataFrame, concat
+from dagster import op, Field, Failure, AssetMaterialization, MetadataValue, Noneable
+from pandas import DataFrame
 from estates.bolig.core.scrappers import Home
 from estates.bolig.scraper import ScrapEstate
 from estates.bolig.io.sizeof import size_of_dataframe
@@ -7,55 +7,40 @@ from estates.bolig.io.sizeof import size_of_dataframe
 
 @op(
     config_schema={
-        "workers": Field(int, is_required=False, default_value=5),
+        "start_page": Field(int, is_required=False, default_value=1),
+        "end_page": Field(Noneable(int), is_required=False, default_value=None),
         "pagesize": Field(int, is_required=False, default_value=15),
+        "workers": Field(int, is_required=False, default_value=5),
+        "verbose": Field(bool, is_required=False, default_value=True),
     }
 )
-def get_home(context) -> list[DataFrame]:
+def get_home(context) -> DataFrame:
     """
     Get home: Gather data from Home.dk
     """
 
-    worker = context.op_config.get("workers")
-    pagesize = context.op_config.get("pagesize")
-
-    params = (
-        {
-            "workers": worker,
-            "start_page": start_page,
-            "end_page": end_page,
-            "pagesize": pagesize,
-            "verbose": True,
-        }
-        for start_page, end_page in {(1, 5), (5, 15), (15, 20)}
-    )
-
-    data = [
-        ScrapEstate(
-            task_id=f"home-{i + 1}",
-            url="https://home.dk/umbraco/backoffice/home-api/Search",
-            api_name="home.dk",
-            scraper_cls=Home,
-            params=param,
-        ).execute()
-        for i, param in enumerate(params)
-    ]
-    return data
-
-
-@op(
-    config_schema={
-        "ignore_index": Field(bool, is_required=False, default_value=True),
+    params = {
+        "start_page": context.op_config.get("start_page"),
+        "end_page": context.op_config.get("end_page"),
+        "pagesize": context.op_config.get("pagesize"),
+        "workers": context.op_config.get("workers"),
+        "verbose": context.op_config.get("verbose"),
     }
-)
-def prepare_home(context, dataframes: list[DataFrame]) -> DataFrame:
+
+    return ScrapEstate(
+        url="https://home.dk/umbraco/backoffice/home-api/Search",
+        api_name="home.dk",
+        scraper_cls=Home,
+        params=params,
+    ).execute()
+
+
+@op
+def prepare_home(context, dataframe: DataFrame) -> DataFrame:
 
     """
     Prepare Home: Prepare data from Home.dk for upload to DataBase
     """
-
-    ignore_index = context.op_config.get("ignore_index")
-    dataframe = concat(dataframes, ignore_index=ignore_index)
 
     if dataframe.empty:
         raise Failure(
