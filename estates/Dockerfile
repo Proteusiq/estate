@@ -5,14 +5,13 @@ FROM python:3.10-slim
 # the DagsterInstance
 
 RUN pip install \
-    dagster \
-    dagit \
-    dagster-postgres \
-    dagster-aws \
-    dagster-docker \
+    dagster==0.14.17 \
+    dagit==0.14.17 \
+    dagster-pandera==0.14.17 \
+    dagster-postgres==0.14.17 \
+    dagstermill==0.14.17 \
     requests \
     pandas \
-    numpy \
     sqlalchemy \
     psycopg2-binary
 
