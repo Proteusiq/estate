@@ -1,5 +1,5 @@
 from pandas import DataFrame
-from dagster import op, Field, AssetMaterialization, MetadataValue
+from dagster import op, AssetMaterialization, MetadataValue
 from estates.bolig.io.sizeof import size_of_dataframe
 
 

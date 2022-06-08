@@ -1,6 +1,7 @@
 from dagster import repository
 
 from estates.jobs.home_job import make_home_job
+from estates.jobs.service_job import make_service_job
 from estates.schedules.my_hourly_schedule import my_hourly_schedule
 from estates.sensors.my_sensor import my_sensor
 
@@ -13,7 +14,10 @@ def estates():
     For hints on building your Dagster repository, see our documentation overview on Repositories:
     https://docs.dagster.io/overview/repositories-workspaces/repositories
     """
-    jobs = [make_home_job]
+    jobs = [
+        make_service_job,
+        make_home_job,
+    ]
     schedules = [my_hourly_schedule]
     sensors = [my_sensor]
 

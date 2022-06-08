@@ -1,6 +1,6 @@
 from dagster import op, Field, Failure, Noneable
 from pandas import DataFrame, concat
-from estates.bolig.core.scrappers import Estate, Nybolig # noqa
+from estates.bolig.core.scrappers import Services
 from estates.bolig.scraper import ScrapEstate
 
 
@@ -27,10 +27,12 @@ def get_service(context) -> DataFrame:
         "verbose": context.op_config.get("verbose"),
     }
 
+    url = context.op_config.get("url")
+
     return ScrapEstate(
-        url=context.op_config.get("url"),
-        api_name="home.dk",
-        scraper_cls=Estate,
+        url=url,
+        api_name=url[: url.find(".") + 2],
+        scraper_cls=Services,
         params=params,
     ).execute()
 
@@ -40,7 +42,7 @@ def get_service(context) -> DataFrame:
         "ignore_index": Field(bool, is_required=False, default_value=True),
     }
 )
-def prepare_services(context, dataf_x: DataFrame, dataf_y: DataFrame) -> DataFrame:
+def prepare_service(context, dataf_x: DataFrame, dataf_y: DataFrame) -> DataFrame:
     """
     Prepare Home: Prepare data from Home.dk for upload to DataBase
     """
