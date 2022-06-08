@@ -1,6 +1,6 @@
 from dagster import op, Field, Failure, Noneable
 from pandas import DataFrame, concat
-from estates.bolig.core.scrappers import Estate, Nybolig
+from estates.bolig.core.scrappers import Estate, Nybolig # noqa
 from estates.bolig.scraper import ScrapEstate
 
 
