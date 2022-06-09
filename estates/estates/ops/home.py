@@ -1,4 +1,4 @@
-from dagster import op, Field, Failure, Noneable
+from dagster import op, Field, Noneable
 from pandas import DataFrame
 from estates.bolig.core.scrappers import Home
 from estates.bolig.scraper import ScrapEstate
@@ -32,25 +32,3 @@ def get_home(context) -> DataFrame:
         scraper_cls=Home,
         params=params,
     ).execute()
-
-
-@op
-def prepare_home(context, dataframe: DataFrame) -> DataFrame:
-
-    """
-    Prepare Home: Prepare data from Home.dk for upload to DataBase
-    """
-
-    if dataframe.empty:
-        raise Failure(
-            description="No dataframe to preprocess",
-        )
-
-    # postgres query roomSize will require "roomSize"
-    dataframe.columns = dataframe.columns.str.lower()
-
-    # columns with dict causes issues. stringfy thme
-    columns = dataframe.select_dtypes("object").columns
-    dataframe[columns] = dataframe[columns].astype(str)
-
-    return dataframe

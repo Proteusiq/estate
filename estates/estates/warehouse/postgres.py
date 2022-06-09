@@ -1,5 +1,5 @@
 from os import getenv
-from pandas import DataFrame
+from pandas import DataFrame, read_sql
 from sqlalchemy import create_engine
 from dagster import resource, Field
 
@@ -26,6 +26,11 @@ class SqlAlchemyPostgresWarehouse:
             if_exists=self._if_exists,
             index=False,
         )
+
+    def get_estates(self, sql_query: str) -> DataFrame:
+        # TODO transform sql_query to models
+
+        return read_sql(sql_query, con=self._engine)
 
     @property
     def table_name(self):
