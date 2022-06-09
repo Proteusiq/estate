@@ -89,7 +89,10 @@ ops:
   nybolig_service:
     config:
       url: "https://www.nybolig.dk/Services/PropertySearch/Search"
-
+resources:
+  warehouse:
+    config:
+      table_name: services
 ```
 
 #### Postgres Admin Tool

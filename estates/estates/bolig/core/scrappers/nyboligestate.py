@@ -2,6 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import numpy as np
 import pandas as pd
+from estates.bolig.io.lazylogger import logger
 from estates.bolig.core.scrap import Bolig
 
 # Building API to Nybolig | Estate
@@ -25,7 +26,7 @@ class Services(Bolig):
             'mustBeSold': False,
             'mustBeInProgress': False,
             'siteName': 'Estate|Nybolig',
-            'take': 100,
+            'take': 20, # max 20
             'skip': 0,
             'sort': 0
 
@@ -59,7 +60,7 @@ class Services(Bolig):
     ```
     """
 
-    def get_page(self, page=0, pagesize=100, verbose=False, **kwargs):
+    def get_page(self, page=1, pagesize=20, verbose=False, **kwargs):
         """Gather Data From Estate | Nybolig API
             page:int page number. default value 0
             pagesize:int number of boligs in a page. default value 100
@@ -67,6 +68,9 @@ class Services(Bolig):
 
         Returns: self.store: list of DataFrame
         """
+
+        if pagesize > 20:
+            logger.warn(f"[+] Maxing page size is 20. Given {pagesize}!")
 
         take = pagesize
         skip = pagesize * page
@@ -92,14 +96,14 @@ class Services(Bolig):
             data = r.json()
 
             self.store[page] = pd.DataFrame(data.get("Results"))
-            self.max_pages = data.get("TotalAmountOfResults")
+            self.max_pages = int(np.ceil(data.get("TotalAmountOfResults") / take))
 
         else:
             self.store
 
         if verbose:
-            print(
-                f'[+] Gathering data from page {page:}.{" ":>5}Found {len(self.store)*pagesize:>5} estates'
+            logger.info(
+                f'[+] Gathering data from page {page:}.{" ":>5}Found {len(self.store) * take:>5} estates'
                 f'{" ":>3}Time {datetime.now().strftime("%d-%m-%Y %H:%M:%S")}'
             )
 
@@ -107,9 +111,9 @@ class Services(Bolig):
 
     def get_pages(
         self,
-        start_page=0,
+        start_page=1,
         end_page=None,
-        pagesize=100,
+        pagesize=20,
         workers=4,
         verbose=False,
         **kwargs,
@@ -129,26 +133,21 @@ class Services(Bolig):
         self.get_page(page=start_page, pagesize=pagesize, verbose=verbose)
 
         if end_page is None:
-            total_pages = self.max_pages / pagesize
-        else:
-            total_pages = start_page + end_page + 1
+            end_page = self.max_pages + 1
 
         # since we got the first page, we can get the rest
+        start_page += 1
+        if start_page <= end_page:
 
-        if start_page <= total_pages:
-            start_page += 1
-
-            def func(pages):
-                return {
-                    self.get_page(page, pagesize, verbose=verbose) for page in pages
-                }
-
-            pages_split = np.array_split(
-                np.arange(start_page, total_pages + 1), workers
-            )
+            pages_split = np.array_split(np.arange(start_page, end_page), workers)
 
             with ThreadPoolExecutor(max_workers=min(32, workers)) as executor:
-                _ = {executor.submit(func, split) for split in pages_split}
+                _ = {
+                    executor.submit(
+                        lambda pages: {self.get_page(page, pagesize, verbose=verbose) for page in pages}, split
+                    )
+                    for split in pages_split
+                }
 
         if len(self.store):
             self.DataFrame = pd.concat(self.store.values(), ignore_index=True)

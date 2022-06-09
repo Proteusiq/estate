@@ -2,6 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import numpy as np
 import pandas as pd
+from estates.bolig.io.lazylogger import logger
 from estates.bolig.core.scrap import Bolig
 
 # Building API to Home.dk
@@ -62,24 +63,20 @@ class Home(Bolig):
             data = r.json()
 
             self.store[page] = pd.DataFrame(data.get("searchResults"))
-            self.max_pages = np.ceil(
-                data["totalSearchResults"] / data["searchResultsPerPage"]
-            ).astype(int)
+            self.max_pages = np.ceil(data["totalSearchResults"] / data["searchResultsPerPage"]).astype(int)
 
         else:
             self.store
 
         if verbose:
-            print(
+            logger.info(
                 f'[+] Gathering data from page {page:}.{" ":>5}Found {len(self.store)*pagesize:>5} estates'
                 f'{" ":>3}Time {datetime.now().strftime("%d-%m-%Y %H:%M:%S")}'
             )
 
         return self
 
-    def get_pages(
-        self, start_page=0, end_page=None, pagesize=100, workers=4, verbose=False
-    ):
+    def get_pages(self, start_page=0, end_page=None, pagesize=100, workers=4, verbose=False):
         """
          Parallel Gathering Data From Home
             start_page:int page number to start. default value 0
@@ -100,21 +97,18 @@ class Home(Bolig):
             total_pages = start_page + end_page + 1
 
         # since we got the first page, we can get the rest
-
+        start_page += 1
         if start_page <= total_pages:
-            start_page += 1
 
-            def func(pages):
-                return {
-                    self.get_page(page, pagesize, verbose=verbose) for page in pages
-                }
-
-            pages_split = np.array_split(
-                np.arange(start_page, total_pages + 1), workers
-            )
+            pages_split = np.array_split(np.arange(start_page, total_pages + 1), workers)
 
             with ThreadPoolExecutor(max_workers=min(32, workers)) as executor:
-                _ = {executor.submit(func, split) for split in pages_split}
+                _ = {
+                    executor.submit(
+                        lambda pages: {self.get_page(page, pagesize, verbose=verbose) for page in pages}, split
+                    )
+                    for split in pages_split
+                }
 
         if len(self.store):
             self.DataFrame = pd.concat(self.store.values(), ignore_index=True)

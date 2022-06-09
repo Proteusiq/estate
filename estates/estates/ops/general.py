@@ -26,7 +26,9 @@ def emit_dataframe_metadata(context, dataframe: DataFrame):
             metadata={
                 "size (megabytes)": MetadataValue.text(size_of_dataframe(dataframe, unit="MB")),
                 "number rows": MetadataValue.int(dataframe.shape[0]),
+                "number columns": MetadataValue.int(dataframe.shape[1]),
                 "# missing values": MetadataValue.int(int(dataframe.isna().sum().sum())),
+                "# duplicate values": MetadataValue.int(int(dataframe.duplicated().sum())),
             },
         )
     )

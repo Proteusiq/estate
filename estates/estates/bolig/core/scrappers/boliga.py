@@ -2,6 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import numpy as np
 import pandas as pd
+from estates.bolig.io.lazylogger import logger
 from estates.bolig.core.scrap import Bolig
 
 # Building API to Boliga.dk
@@ -73,7 +74,7 @@ class Boliga(Bolig):
             self.store
 
         if verbose:
-            print(
+            logger.info(
                 f'[+] Gathering data from page {page:}.{" ":>5}Found {len(self.store)*pagesize:>5} estates'
                 f'{" ":>3}Time {datetime.now().strftime("%d-%m-%Y %H:%M:%S")}'
             )
