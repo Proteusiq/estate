@@ -9,10 +9,9 @@ from estates.sensors.my_sensor import my_sensor
 @repository
 def estates():
     """
-    The repository definition for this estates Dagster repository.
-
-    For hints on building your Dagster repository, see our documentation overview on Repositories:
-    https://docs.dagster.io/overview/repositories-workspaces/repositories
+    ## Denmark Real Estates
+    > Performing DataOps, ML and MLOps with real estates data
+    Code: [advance scraping](https://github.com/Proteusiq/advance_scraping)
     """
     jobs = [
         make_service_job,

@@ -80,6 +80,18 @@ See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 #### Dagster UI
 Head to `localhost:3000` on your browser. 
 
+Running `make_service_job` requires config:
+```yaml
+ops:
+  estate_service:
+    config:
+      url: "https://www.estate.dk/Services/PropertySearch/Search"
+  nybolig_service:
+    config:
+      url: "https://www.nybolig.dk/Services/PropertySearch/Search"
+
+```
+
 #### Postgres Admin Tool
 Head to `localhost:5050`. Login with credentials used in your environment PGADMIN_DEFAULT_EMAIL and PGADMIN_DEFAULT_PASSWORD variables. Example: `danpra@example.com` and password `postgrespwd`
 
