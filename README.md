@@ -163,6 +163,11 @@ Use docker-compose down -v to remove also the volumes.
 docker compose down -v
 ```
 See: [docker-compose down](https://docs.docker.com/compose/reference/down/) options
+
+
+<details>
+  <summary>OOP Rumbling</summary>
+
 ### Web Scraping and Design Pattern [Opinionated Rumbling]
 A lazy programmer, like me, loves to write less yet comprehensive codes. (:) Yes, I said it). Design Pattern in Python is not as useful and, in most cases, an overkill as other languages like Java, C#, and C++. To design a simple bolig[_danish for estate_] scrapping tool from different estate websites in Denmark, I decided to use Abstract Factory Pattern.
 
@@ -181,6 +186,7 @@ Home(Services)          # initiate with home recent home as url
 Estate(Services)        # initiate with estate recent home as url
 ```
 
+</details>
 
 ### Todo:
 - [X] Add a web-scraper examples
