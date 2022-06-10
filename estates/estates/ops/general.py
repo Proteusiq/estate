@@ -6,7 +6,7 @@ from estates.bolig.io.sizeof import size_of_dataframe
 @op(required_resource_keys={"warehouse"})
 def store_dataframe(context, dataframe: DataFrame):
     """
-    Load Home: Load Home data to DataBase
+    Load Home: Load dataframe to DataBase
     """
 
     context.log.info(f"Loading data {dataframe.shape} to Postgres ...")
@@ -18,7 +18,7 @@ def store_dataframe(context, dataframe: DataFrame):
 def prepare_dataframe(context, dataframe: DataFrame) -> DataFrame:
 
     """
-    Prepare Home: Prepare data from Home.dk for upload to DataBase
+    Prepare Home: Prepare data from real estate apis for upload to DataBase
     """
 
     if dataframe.empty:
@@ -40,7 +40,7 @@ def prepare_dataframe(context, dataframe: DataFrame) -> DataFrame:
 def emit_dataframe_metadata(context, dataframe: DataFrame):
 
     """
-    Emit Home Data Size: Home metadata
+    Emit Estate Data Metadata
     """
     context.log_event(
         AssetMaterialization(

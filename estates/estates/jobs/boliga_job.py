@@ -1,5 +1,5 @@
 from dagster import job
-from estates.ops.home import get_home
+from estates.ops.boliga import get_boliga
 from estates.ops.general import store_dataframe, emit_dataframe_metadata, prepare_dataframe
 from estates.warehouse.postgres import sqlalchemy_postgres_warehouse_resource
 
@@ -9,13 +9,13 @@ from estates.warehouse.postgres import sqlalchemy_postgres_warehouse_resource
         "warehouse": sqlalchemy_postgres_warehouse_resource,
     }
 )
-def make_home_job():
+def make_boliga_job():
     """
-    Get Data Home.dk
+    Boliga Job
 
-    Fetch data from home.dk api
-    https://home.dk/umbraco/backoffice/home-api
+    Get data from boliga api https://api.boliga.dk/api/v2/
+
     """
-    home_dataframe = prepare_dataframe(get_home())
-    store_dataframe(home_dataframe)
-    emit_dataframe_metadata(home_dataframe)
+    boliga_dataframe = prepare_dataframe(get_boliga())
+    store_dataframe(boliga_dataframe)
+    emit_dataframe_metadata(boliga_dataframe)

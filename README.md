@@ -80,6 +80,7 @@ See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 #### Dagster UI
 Head to `localhost:3000` on your browser. 
 
+_Examples_: On Launchpad
 Running `make_service_job` requires config:
 ```yaml
 ops:
@@ -93,6 +94,35 @@ resources:
   warehouse:
     config:
       table_name: services
+```
+
+example: `make_boliga_job` recent estates
+```yaml
+ops:
+  get_boliga:
+    config:
+      start_page: 0
+      end_page: 100
+      pagesize: 800
+      url: https://api.boliga.dk/api/v2/search/results
+resources:
+  warehouse:
+    config:
+      table_name: boliga_current
+```
+
+example: `make_boliga_job` sold estates
+```yaml
+ops:
+  get_boliga:
+    config:
+      start_page: 0
+      end_page: 100
+      pagesize: 800
+resources:
+  warehouse:
+    config:
+      table_name: "boliga_sold"
 ```
 
 #### Postgres Admin Tool
