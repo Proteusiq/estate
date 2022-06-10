@@ -69,13 +69,6 @@ You can run the services in detach mode. `--detach` or `-d` flag. This will leav
 
 See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 
-## UI Services:
-![advance_image](images/airflow_dag.png)
-- ##### Dagster:  `address:` __localhost:3000__ 
-- ##### pgAdmin: `address:` __localhost:5050__ `default_email:` __pgadmin@example.com__ `default_pwd`: __admin__
-- ##### minio: `address:` __localhost:9000__ `default_key:` __danpra__ `default_secret:` __miniopwd__
-
-
 
 #### Dagster UI
 Head to `localhost:3000` on your browser. 
@@ -133,6 +126,13 @@ resources:
 
 <details>
   <summary>Tools</summary>
+
+## UI Services:
+![advance_image](images/airflow_dag.png)
+- ##### Dagster:  `address:` __localhost:3000__ 
+- ##### pgAdmin: `address:` __localhost:5050__ `default_email:` __pgadmin@example.com__ `default_pwd`: __admin__
+- ##### minio: `address:` __localhost:9000__ `default_key:` __danpra__ `default_secret:` __miniopwd__
+
 
 #### Postgres Admin Tool
 Head to `localhost:5050`. Login with credentials used in your environment PGADMIN_DEFAULT_EMAIL and PGADMIN_DEFAULT_PASSWORD variables. Example: `danpra@example.com` and password `postgrespwd`
