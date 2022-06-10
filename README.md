@@ -81,6 +81,10 @@ See: [docker-compose up](https://docs.docker.com/compose/reference/up/) options
 Head to `localhost:3000` on your browser. 
 
 _Examples_: On Launchpad
+
+<details>
+  <summary>Jobs Config!</summary>
+
 Running `make_service_job` requires config:
 ```yaml
 ops:
@@ -125,6 +129,7 @@ resources:
       table_name: "boliga_sold"
 ```
 
+</details>
 #### Postgres Admin Tool
 Head to `localhost:5050`. Login with credentials used in your environment PGADMIN_DEFAULT_EMAIL and PGADMIN_DEFAULT_PASSWORD variables. Example: `danpra@example.com` and password `postgrespwd`
 
