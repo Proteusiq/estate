@@ -1,7 +1,8 @@
 from os import getenv
+from typing import Optional
 from pandas import DataFrame, read_sql
 from sqlalchemy import create_engine
-from dagster import resource, Field
+from dagster import resource, Field, Noneable
 
 
 POSTGRESS_URI = getenv("DAGSTER_PG_URI")
@@ -13,11 +14,13 @@ class SqlAlchemyPostgresWarehouse:
         conn_str: str,
         table_name: str,
         if_exists: str,
+        sql_query: Optional[str] = None,
     ):
         self._conn_str = conn_str
         self._engine = create_engine(self._conn_str)
         self._if_exists = if_exists
         self._table_name = table_name
+        self._sql_query = sql_query
 
     def update_estate(self, dataframe: DataFrame):
         dataframe.to_sql(
@@ -27,14 +30,24 @@ class SqlAlchemyPostgresWarehouse:
             index=False,
         )
 
-    def get_estates(self, sql_query: str) -> DataFrame:
+    def get_estates(self) -> DataFrame:
         # TODO transform sql_query to models
 
-        return read_sql(sql_query, con=self._engine)
+        dataframe = read_sql(self._sql_query, con=self._engine)
+        return dataframe
 
     @property
-    def table_name(self):
+    def table_name(self) -> str:
         return self._table_name
+
+    @property
+    def sql_query(self) -> str:
+        # TODO transform sql_query to models
+        return self._sql_query
+
+    @sql_query.setter
+    def sql_query(self, sql_query) -> None:
+        self._sql_query = sql_query
 
 
 @resource(
@@ -42,6 +55,7 @@ class SqlAlchemyPostgresWarehouse:
         "conn_str": Field(str, is_required=False, default_value=POSTGRESS_URI),
         "table_name": Field(str, is_required=False, default_value="home"),
         "if_exists": Field(str, is_required=False, default_value="replace"),
+        "sql_query": Field(Noneable(str), is_required=False, default_value=None),
     }
 )
 def sqlalchemy_postgres_warehouse_resource(context):

@@ -1,12 +1,12 @@
-from dagster import op, Field, Failure, Noneable
+from dagster import op, Field, Noneable
 from pandas import DataFrame
-from estates.bolig.core.scrappers import BoligaSold
+from estates.bolig.core.scrappers import Boliga
 from estates.bolig.scraper import ScrapEstate
 
 
 @op(
     config_schema={
-        "url": Field(str, is_required=False, default_value=None),
+        "url": Field(Noneable(str), is_required=False, default_value=None),
         "start_page": Field(int, is_required=False, default_value=1),
         "end_page": Field(Noneable(int), is_required=False, default_value=None),
         "pagesize": Field(int, is_required=False, default_value=15),
@@ -14,9 +14,9 @@ from estates.bolig.scraper import ScrapEstate
         "verbose": Field(bool, is_required=False, default_value=True),
     }
 )
-def get_service(context) -> DataFrame:
+def get_boliga(context) -> DataFrame:
     """
-    Get estates: Gather data from [Nybolig|Estate].dk
+    Get estates: Gather data from boliga.dk
     """
 
     params = {
@@ -31,32 +31,7 @@ def get_service(context) -> DataFrame:
 
     return ScrapEstate(
         url=url,
-        api_name=url[: url.find(".") + 2],
-        scraper_cls=BoligaSold,
+        api_name="api.boliga.dk",
+        scraper_cls=Boliga,
         params=params,
     ).execute()
-
-
-@op(
-    config_schema={
-        "ignore_index": Field(bool, is_required=False, default_value=True),
-    }
-)
-def prepare_boliga(context, dataframe: DataFrame) -> DataFrame:
-    """
-    Prepare Home: Prepare data from Home.dk for upload to DataBase
-    """
-
-    if dataframe.empty:
-        raise Failure(
-            description="No dataframe to preprocess",
-        )
-
-    # postgres query roomSize will require "roomSize"
-    dataframe.columns = dataframe.columns.str.lower()
-
-    # columns with dict causes issues. stringfy thme
-    columns = dataframe.select_dtypes("object").columns
-    dataframe[columns] = dataframe[columns].astype(str)
-
-    return dataframe
