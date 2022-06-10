@@ -130,6 +130,10 @@ resources:
 ```
 
 </details>
+
+<details>
+  <summary>Tools</summary>
+
 #### Postgres Admin Tool
 Head to `localhost:5050`. Login with credentials used in your environment PGADMIN_DEFAULT_EMAIL and PGADMIN_DEFAULT_PASSWORD variables. Example: `danpra@example.com` and password `postgrespwd`
 
@@ -143,6 +147,7 @@ Adding a connection to `postgres` DB in `pgAdmin`, click `Add New Server`. Type 
 # Dagster's Architecture:
 [Coming soon]
 
+</details>
 
 ### Stop services with:
 Press `Ctrl + C` to stop our services without killing your volumes data. Then do
