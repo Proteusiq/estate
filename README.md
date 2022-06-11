@@ -15,7 +15,8 @@ Checklist to start our services
 - [ ] run the service with a single docker compose command
 
 ## Disclamer:
-> Real estates data gathered through websites API are for personal use only. This project demonstrates how I built a pipeline to assist my family buy a house 🏡 
+> Real estates data gathered through websites API are for personal use only. This project demonstrates how I built a pipeline to assist my family buy a house 🏡.
+Where to use that data beyond private use. Do contact estate websites API for permission.
 
 ### Git Clone
 ```bash
