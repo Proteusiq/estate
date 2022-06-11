@@ -16,7 +16,7 @@ Checklist to start our services
 
 ## Disclamer:
 > Real estates data gathered through websites API are for personal use only. This project demonstrates how I built a pipeline to assist my family buy a house 🏡.
-Where to use that data beyond private use. Do contact estate websites API for permission.
+Where you to use that data beyond private use. Do contact estate websites API for permission.
 
 ### Git Clone
 ```bash
