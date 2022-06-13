@@ -246,3 +246,9 @@ WHERE
 ORDER BY
     column_name ASC
 ```
+
+drop table
+
+```sql
+DROP TABLE "test"
+```
