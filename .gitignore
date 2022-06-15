@@ -121,3 +121,6 @@ services/minio/data
 # Dagster
 estates/dagster_home/
 
+# Data
+estates/estates/notebooks/data
+estates/notebooks/catboost_info

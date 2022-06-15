@@ -7,17 +7,25 @@ authors = ["Prayson W. Daniel <praysonpi@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = ">=3.8.0"
+python = ">=3.8.0,<3.11"
 pandas = "^1.4.2"
 httpx = "^0.23.0"
 SQLAlchemy = "^1.4.36"
 psycopg2-binary = "^2.9.3"
 dagster = "^0.14.16"
 dagit = "^0.14.16"
+scipy = "^1.8.1"
+scikit-learn = "^1.1.1"
+scikit-optimize = "^0.9.0"
+catboost = "^1.0.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
 pytest-parallel = "^0.1.1"
+ipykernel = "^6.14.0"
+ipywidgets = "^7.7.0"
+plotly = "^5.8.2"
+watermark = "^2.3.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
