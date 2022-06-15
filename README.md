@@ -252,3 +252,15 @@ drop table
 ```sql
 DROP TABLE "test"
 ```
+
+# Installation issues
+scipy needs python <3.11
+
+
+# Training Data
+```sql
+SELECT * FROM boliga_sold
+WHERE saletype = 'Alm. Salg' 
+    AND DATE_PART('year', solddate::date) > 2016
+
+```
