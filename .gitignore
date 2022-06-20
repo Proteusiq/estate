@@ -124,3 +124,4 @@ estates/dagster_home/
 # Data
 estates/estates/notebooks/data
 estates/notebooks/catboost_info
+estates/estates/notebooks/nohup.out

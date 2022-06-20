@@ -259,8 +259,9 @@ scipy needs python <3.11
 
 # Training Data
 ```sql
-SELECT * FROM boliga_sold
+SELECT price, solddate::date FROM boliga_sold
 WHERE saletype = 'Alm. Salg' 
-    AND DATE_PART('year', solddate::date) > 2016
-
+    AND city = 'Hvidovre'
+    AND propertytype in (1, 2, 3) -- villa, jointhouse, apartment
+    AND DATE_PART('year', solddate::date) > 2010
 ```
