@@ -125,3 +125,4 @@ estates/dagster_home/
 estates/estates/notebooks/data
 estates/notebooks/catboost_info
 estates/estates/notebooks/nohup.out
+estates/estates/notebooks/darts_logs
