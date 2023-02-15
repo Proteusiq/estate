@@ -3901,14 +3901,14 @@ tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 
 [[package]]
 name = "starlette"
-version = "0.20.3"
+version = "0.25.0"
 description = "The little ASGI library that shines."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "starlette-0.20.3-py3-none-any.whl", hash = "sha256:4d39be143dffde65782865ce40f86e5a8986400c5be0217b3cda3e732bfd7233"},
-    {file = "starlette-0.20.3.tar.gz", hash = "sha256:38ef09c1c9a8ea7b7927d2c42d515efbbdbb6ea60dbe88b29abb320824fe16c1"},
+    {file = "starlette-0.25.0-py3-none-any.whl", hash = "sha256:774f1df1983fd594b9b6fb3ded39c2aa1979d10ac45caac0f4255cbe2acb8628"},
+    {file = "starlette-0.25.0.tar.gz", hash = "sha256:854c71e73736c429c2bdb07801f2c76c9cba497e7c3cf4988fde5e95fe4cdb3c"},
 ]
 
 [package.dependencies]
@@ -3916,7 +3916,7 @@ anyio = ">=3.4.0,<5"
 typing-extensions = {version = ">=3.10.0", markers = "python_version < \"3.10\""}
 
 [package.extras]
-full = ["itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests"]
+full = ["httpx (>=0.22.0)", "itsdangerous", "jinja2", "python-multipart", "pyyaml"]
 
 [[package]]
 name = "statsforecast"
